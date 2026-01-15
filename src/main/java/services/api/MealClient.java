@@ -16,42 +16,29 @@ import services.model.Meal;
 import services.model.MealResponse;
 
 public class MealClient {
-
+	
 	private static final String BASE_URL = "https://www.themealdb.com/api/json/v1/1";
-	private static final ObjectMapper mapper = new ObjectMapper();
-
-	public static Meal getRandomMeal() {
-		MealResponse response = executeRequest(BASE_URL + "/random.php");
-		return getFirstMealOrNull(response);
+	
+	private final CloseableHttpClient httpClient;
+	private final ObjectMapper mapper;
+	
+	// Public Constructor (Default)
+	public MealClient() {
+		this(HttpClients.createDefault());
 	}
+	
+	// Package-Private Constructor (For Tests)
+	MealClient(CloseableHttpClient httpClient) {
+		this.httpClient = httpClient;
+		this.mapper = new ObjectMapper();
+	}
+	
+	
+	private MealResponse executeRequest(String url) {
+		HttpGet request = new HttpGet(url);
 		
-	public static Meal getMealById(String id) {
-		MealResponse response = executeRequest(BASE_URL + "/lookup.php?i=" + id);
-		return getFirstMealOrNull(response);
-	}
-
-	public static List<Meal> searchMealsByName(String name) {
-		MealResponse response = executeRequest(BASE_URL + "/search.php?s=" + name);
-		if (response.getMeals() == null) {
-			return Collections.emptyList();
-		}
-		return response.getMeals();
-	}
-	
-	public static List<Meal> filterMealsByIngredient(String ingredient) {
-		MealResponse response = executeRequest(BASE_URL + "/filter.php?i=" + ingredient);
-		if (response.getMeals() == null) {
-			return Collections.emptyList();
-		}
-		return response.getMeals();
-	}
-	
-	private static MealResponse executeRequest(String url) {
-		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-			
-			HttpGet request = new HttpGet(url);
-			
-			return httpClient.execute(request, response -> {
+		try {
+			return this.httpClient.execute(request, response -> {
 				int status = response.getCode();
 				
 				// Handle Server Errors 
@@ -65,6 +52,7 @@ public class MealClient {
 			if (body == null || body.trim().isEmpty()) {
 				throw new MealApiException("API returned an empty response");
 			}
+			
 			// Handle Parsing Responses
 			try {
 				return mapper.readValue(body, MealResponse.class);
@@ -78,12 +66,41 @@ public class MealClient {
 			// Handle Network Errors
 			throw new MealApiException("Network Error: Unable to conncect to theMealDB", e);
 		}
-}
+	}
 	
-	private static Meal getFirstMealOrNull(MealResponse response) {
+	
+	private Meal getFirstMealOrNull(MealResponse response) {
 		if (response.getMeals() != null && !response.getMeals().isEmpty()) {
 			return response.getMeals().get(0);
 		}
 		return null;
 	}
+	
+
+	public Meal getRandomMeal() {
+		MealResponse response = executeRequest(BASE_URL + "/random.php");
+		return getFirstMealOrNull(response);
+	}
+		
+	public Meal getMealById(String id) {
+		MealResponse response = executeRequest(BASE_URL + "/lookup.php?i=" + id);
+		return getFirstMealOrNull(response);
+	}
+
+	public List<Meal> searchMealsByName(String name) {
+		MealResponse response = executeRequest(BASE_URL + "/search.php?s=" + name);
+		if (response.getMeals() == null) {
+			return Collections.emptyList();
+		}
+		return response.getMeals();
+	}
+	
+	public List<Meal> filterMealsByIngredient(String ingredient) {
+		MealResponse response = executeRequest(BASE_URL + "/filter.php?i=" + ingredient);
+		if (response.getMeals() == null) {
+			return Collections.emptyList();
+		}
+		return response.getMeals();
+	}
+	
 }
