@@ -1,18 +1,19 @@
 package services.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class MealTest {
 	private Meal meal;
 	
 		
-	@Before
+	@BeforeEach
 	public void setUp() {
 		this.meal = new Meal();
 	}
@@ -28,7 +29,7 @@ public class MealTest {
 		
 		List<String> result = meal.getIngredientsList();
 		
-		assertEquals("Should have exactly 2 valid ingredients", 2, result.size());
+		assertEquals(2, result.size());
 		assertEquals("Chicken - 1kg", result.get(0));
 		assertEquals("Onion - 2 slices", result.get(1));
 	}
@@ -43,7 +44,7 @@ public class MealTest {
 	    
 	    List<String> result = meal.getIngredientsList();
 	    
-	    assertEquals("Should have exactly 2 valid ingredients", 2, result.size());
+	    assertEquals(2, result.size());
 		assertEquals("Salt", result.get(0));
 		assertEquals("Pepper", result.get(1));
 	}
@@ -56,7 +57,7 @@ public class MealTest {
 		
 		List<String> result = meal.getIngredientsList();
 		
-		assertEquals("List should be empty when ingredients are blank strings", 0, result.size());
+		assertEquals(0, result.size());
 	}
 	
 	@Test
@@ -66,7 +67,7 @@ public class MealTest {
 
 	    List<String> result = meal.getIngredientsList();
 
-	    assertTrue("Ingredient without name should be ignored", result.isEmpty());
+	    assertTrue(result.isEmpty());
 	}
 
 		
@@ -77,7 +78,7 @@ public class MealTest {
 		List<String> result = meal.getIngredientsList();
 		
 		
-		assertTrue("List should be empty for new Meal",result.isEmpty());
+		assertTrue(result.isEmpty());
 	}
 	
 
