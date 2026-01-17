@@ -11,9 +11,9 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import services.exception.MealApiException;
-import services.model.Meal;
-import services.model.MealResponse;
+import services.exceptions.MealApiException;
+import services.models.Meal;
+import services.models.MealResponse;
 
 public class MealClient {
 	

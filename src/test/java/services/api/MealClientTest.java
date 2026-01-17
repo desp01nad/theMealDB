@@ -23,8 +23,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import services.exception.MealApiException;
-import services.model.Meal;
+import services.exceptions.MealApiException;
+import services.models.Meal;
 
 @ExtendWith(MockitoExtension.class)
 class MealClientTest {

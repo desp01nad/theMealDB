@@ -1,4 +1,4 @@
-package services.model;
+package services.models;
 import java.util.ArrayList;
 import java.util.List;
 
