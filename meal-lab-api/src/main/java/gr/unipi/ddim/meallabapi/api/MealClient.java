@@ -12,76 +12,73 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gr.unipi.ddim.meallabapi.exceptions.MealApiException;
+import gr.unipi.ddim.meallabapi.models.ImageSize;
 import gr.unipi.ddim.meallabapi.models.Meal;
 import gr.unipi.ddim.meallabapi.models.MealResponse;
 
 public class MealClient {
-	
+
 	private static final String BASE_URL = "https://www.themealdb.com/api/json/v1/1";
-	
+
 	private final CloseableHttpClient httpClient;
 	private final ObjectMapper mapper;
-	
+
 	// Public Constructor (Default)
 	public MealClient() {
 		this(HttpClients.createDefault());
 	}
-	
+
 	// Package-Private Constructor (For Tests)
 	MealClient(CloseableHttpClient httpClient) {
 		this.httpClient = httpClient;
 		this.mapper = new ObjectMapper();
 	}
-	
-	
+
 	private MealResponse executeRequest(String url) {
 		HttpGet request = new HttpGet(url);
-		
+
 		try {
 			return this.httpClient.execute(request, response -> {
 				int status = response.getCode();
-				
-				// Handle Server Errors 
+
+				// Handle Server Errors
 				if (status >= 400) {
 					throw new MealApiException("API request faiiled with error status: " + status);
 				}
-						
-			String body = EntityUtils.toString(response.getEntity());
-			
-			// Handle Empty Responses
-			if (body == null || body.trim().isEmpty()) {
-				throw new MealApiException("API returned an empty response");
-			}
-			
-			// Handle Parsing Responses
-			try {
-				return mapper.readValue(body, MealResponse.class);
+
+				String body = EntityUtils.toString(response.getEntity());
+
+				// Handle Empty Responses
+				if (body == null || body.trim().isEmpty()) {
+					throw new MealApiException("API returned an empty response");
+				}
+
+				// Handle Parsing Responses
+				try {
+					return mapper.readValue(body, MealResponse.class);
 				} catch (Exception e) {
 					throw new MealApiException("Failed to parse API JSON response", e);
-				}		
-		});
-			
-		
+				}
+			});
+
 		} catch (IOException e) {
 			// Handle Network Errors
 			throw new MealApiException("Network Error: Unable to conncect to theMealDB", e);
 		}
 	}
-	
-	
+
 	private Meal getFirstMealOrNull(MealResponse response) {
 		if (response.getMeals() != null && !response.getMeals().isEmpty()) {
 			return response.getMeals().get(0);
 		}
 		return null;
 	}
-	
 
 	public Meal getRandomMeal() {
 		MealResponse response = executeRequest(BASE_URL + "/random.php");
 		return getFirstMealOrNull(response);
 	}
-		
+
 	public Meal getMealById(String id) {
 		MealResponse response = executeRequest(BASE_URL + "/lookup.php?i=" + id);
 		return getFirstMealOrNull(response);
@@ -94,7 +91,7 @@ public class MealClient {
 		}
 		return response.getMeals();
 	}
-	
+
 	public List<Meal> filterMealsByIngredient(String ingredient) {
 		MealResponse response = executeRequest(BASE_URL + "/filter.php?i=" + ingredient);
 		if (response.getMeals() == null) {
@@ -102,5 +99,30 @@ public class MealClient {
 		}
 		return response.getMeals();
 	}
-	
+
+	public byte[] fetchMealImage(Meal meal, ImageSize size) {
+		String baseUrl = meal.getStrMealThumb();
+
+        if (baseUrl == null || baseUrl.trim().isEmpty()) {
+            throw new MealApiException("No image URL present for meal: " + meal.getStrMeal());
+        }
+
+        String finalUrl = baseUrl + size.getUrlSuffix();
+        
+        HttpGet request = new HttpGet(finalUrl);
+
+		try {
+			return this.httpClient.execute(request, response -> {
+				int status = response.getCode();
+				if (status >= 400) {
+					throw new MealApiException("Failed to fetch image. HTTP Status: " + status);
+				}
+				return EntityUtils.toByteArray(response.getEntity());
+			});
+
+		} catch (IOException e) {
+			throw new MealApiException("Network error while downloading image", e);
+		}
+	}
+
 }

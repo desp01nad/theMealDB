@@ -1,10 +1,12 @@
 package gr.unipi.ddim.meallabapi.api;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
@@ -20,11 +22,13 @@ import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import gr.unipi.ddim.meallabapi.api.MealClient;
 import gr.unipi.ddim.meallabapi.exceptions.MealApiException;
+import gr.unipi.ddim.meallabapi.models.ImageSize;
 import gr.unipi.ddim.meallabapi.models.Meal;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,7 +50,7 @@ class MealClientTest {
 		mealClient = new MealClient(mockHttpClient);
 	}
 
-	// Helper to setup the mock response 
+	// Helper to setup the mock response
 	@SuppressWarnings("unchecked")
 	private void setupMockResponse(int statusCode, String jsonBody) throws IOException {
 		// Setup Status Code
@@ -69,140 +73,167 @@ class MealClientTest {
 					return handler.handleResponse(mockResponse);
 				});
 	}
-	
-	
-	// executeRequest Tests 
-	
+
+	// executeRequest Tests
+
 	@Test
-    void executeRequest_ShouldThrowException_WhenResponseIsEmpty() throws Exception {
-        // Arrange: API returns 200 OK but empty body
-        setupMockResponse(200, "");
+	void executeRequest_ShouldThrowException_WhenResponseIsEmpty() throws Exception {
+		// Arrange: API returns 200 OK but empty body
+		setupMockResponse(200, "");
 
-        // Act & Assert
-        Exception e = assertThrows(MealApiException.class, () -> mealClient.getRandomMeal());
-        assertTrue(e.getMessage().contains("empty response"));
-    }
-	
+		// Act & Assert
+		Exception e = assertThrows(MealApiException.class, () -> mealClient.getRandomMeal());
+		assertTrue(e.getMessage().contains("empty response"));
+	}
+
 	@Test
-    void executeRequest_ShouldThrowException_WhenServerReturnsError() throws Exception {
-        // Arrange: Simulate a 404 Not Found
-        setupMockResponse(404, null);
+	void executeRequest_ShouldThrowException_WhenServerReturnsError() throws Exception {
+		// Arrange: Simulate a 404 Not Found
+		setupMockResponse(404, null);
 
-        // Act & Assert
-        Exception e = assertThrows(MealApiException.class, () -> mealClient.getRandomMeal());
-        assertTrue(e.getMessage().contains("error status: 404"));
-    }
-	
-	
-	// getRandomMeal Tests 
+		// Act & Assert
+		Exception e = assertThrows(MealApiException.class, () -> mealClient.getRandomMeal());
+		assertTrue(e.getMessage().contains("error status: 404"));
+	}
 
-    @Test
-    void getRandomMeal_ShouldReturnMeal_WhenApiReturnsData() throws Exception {
-        // Arrange
-        String json = "{ \"meals\": [{ \"idMeal\": \"999\", \"strMeal\": \"Surprise Stew\" }] }";
-        setupMockResponse(200, json);
+	// getRandomMeal Tests
 
-        // Act
-        Meal result = mealClient.getRandomMeal();
-
-        // Assert
-        assertEquals("Surprise Stew", result.getStrMeal());
-    }
-    
-    
-    // getMealById Tests 
-
-    @Test
-    void getMealById_ShouldReturnMeal_WhenIdExists() throws Exception {
-        // Arrange
-        String json = "{ \"meals\": [{ \"idMeal\": \"52772\", \"strMeal\": \"Teriyaki Chicken\" }] }";
-        setupMockResponse(200, json);
-
-        // Act
-        Meal result = mealClient.getMealById("52772");
-
-        // Assert
-        assertEquals("Teriyaki Chicken", result.getStrMeal());
-    }
-    
-    @Test
-    void getMealById_ShouldReturnNull_WhenIdDoesNotExist() throws Exception {
-        // Arrange: API returns { "meals": null } for invalid IDs
-        String json = "{ \"meals\": null }";
-        setupMockResponse(200, json);
-
-        // Act
-        Meal result = mealClient.getMealById("00000");
-
-        // Assert
-        assertEquals(null, result);
-    }
-    
-    
-    // searchMealsByName Tests (Remaining) 
-	
 	@Test
-    void searchMealsByName_ShouldReturnList_WhenMultipleMealsFound() throws Exception {
-        // Arrange
-        String json = "{ \"meals\": [ " +
-                      "{ \"idMeal\": \"1\", \"strMeal\": \"Burger\" }, " +
-                      "{ \"idMeal\": \"2\", \"strMeal\": \"Cheeseburger\" } " +
-                      "] }";
-        setupMockResponse(200, json);
+	void getRandomMeal_ShouldReturnMeal_WhenApiReturnsData() throws Exception {
+		// Arrange
+		String json = "{ \"meals\": [{ \"idMeal\": \"999\", \"strMeal\": \"Surprise Stew\" }] }";
+		setupMockResponse(200, json);
 
-        // Act
-        List<Meal> results = mealClient.searchMealsByName("Burger");
+		// Act
+		Meal result = mealClient.getRandomMeal();
 
-        // Assert
-        assertEquals(2, results.size());
-        assertEquals("Burger", results.get(0).getStrMeal());
-    }
-	
+		// Assert
+		assertEquals("Surprise Stew", result.getStrMeal());
+	}
+
+	// getMealById Tests
+
 	@Test
-    void searchMealsByName_ShouldReturnEmptyList_WhenNoMealsFound() throws Exception {
-        // Arrange: API returns null for "meals" if search has no results
-        String json = "{ \"meals\": null }";
-        setupMockResponse(200, json);
+	void getMealById_ShouldReturnMeal_WhenIdExists() throws Exception {
+		// Arrange
+		String json = "{ \"meals\": [{ \"idMeal\": \"52772\", \"strMeal\": \"Teriyaki Chicken\" }] }";
+		setupMockResponse(200, json);
 
-        // Act
-        List<Meal> results = mealClient.searchMealsByName("InvalidFoodName");
+		// Act
+		Meal result = mealClient.getMealById("52772");
 
-        // Assert
-        assertTrue(results.isEmpty());
-    }
-	
-	
-	// filterMealsByIngredient Tests 
-	
+		// Assert
+		assertEquals("Teriyaki Chicken", result.getStrMeal());
+	}
+
 	@Test
-    void filterMealsByIngredient_ShouldReturnList_WhenMatchesFound() throws Exception {
-        // Arrange
-        String json = "{ \"meals\": [ " +
-                      "{ \"strMeal\": \"Chicken Curry\" }, " +
-                      "{ \"strMeal\": \"Chicken Soup\" } " +
-                      "] }";
-        setupMockResponse(200, json);
+	void getMealById_ShouldReturnNull_WhenIdDoesNotExist() throws Exception {
+		// Arrange: API returns { "meals": null } for invalid IDs
+		String json = "{ \"meals\": null }";
+		setupMockResponse(200, json);
 
-        // Act
-        List<Meal> results = mealClient.filterMealsByIngredient("Chicken");
+		// Act
+		Meal result = mealClient.getMealById("00000");
 
-        // Assert
-        assertEquals(2, results.size());
-    }
-	
+		// Assert
+		assertEquals(null, result);
+	}
+
+	// searchMealsByName Tests (Remaining)
+
 	@Test
-    void filterMealsByIngredient_ShouldReturnEmptyList_WhenNoMatchesFound() throws Exception {
-        // Arrange
-        String json = "{ \"meals\": null }";
-        setupMockResponse(200, json);
+	void searchMealsByName_ShouldReturnList_WhenMultipleMealsFound() throws Exception {
+		// Arrange
+		String json = "{ \"meals\": [ " + "{ \"idMeal\": \"1\", \"strMeal\": \"Burger\" }, "
+				+ "{ \"idMeal\": \"2\", \"strMeal\": \"Cheeseburger\" } " + "] }";
+		setupMockResponse(200, json);
 
-        // Act
-        List<Meal> results = mealClient.filterMealsByIngredient("Rocks");
+		// Act
+		List<Meal> results = mealClient.searchMealsByName("Burger");
 
-        // Assert
-        assertTrue(results.isEmpty());
-    }
-	
-	
-	
+		// Assert
+		assertEquals(2, results.size());
+		assertEquals("Burger", results.get(0).getStrMeal());
+	}
+
+	@Test
+	void searchMealsByName_ShouldReturnEmptyList_WhenNoMealsFound() throws Exception {
+		// Arrange: API returns null for "meals" if search has no results
+		String json = "{ \"meals\": null }";
+		setupMockResponse(200, json);
+
+		// Act
+		List<Meal> results = mealClient.searchMealsByName("InvalidFoodName");
+
+		// Assert
+		assertTrue(results.isEmpty());
+	}
+
+	// filterMealsByIngredient Tests
+
+	@Test
+	void filterMealsByIngredient_ShouldReturnList_WhenMatchesFound() throws Exception {
+		// Arrange
+		String json = "{ \"meals\": [ " + "{ \"strMeal\": \"Chicken Curry\" }, " + "{ \"strMeal\": \"Chicken Soup\" } "
+				+ "] }";
+		setupMockResponse(200, json);
+
+		// Act
+		List<Meal> results = mealClient.filterMealsByIngredient("Chicken");
+
+		// Assert
+		assertEquals(2, results.size());
+	}
+
+	@Test
+	void filterMealsByIngredient_ShouldReturnEmptyList_WhenNoMatchesFound() throws Exception {
+		// Arrange
+		String json = "{ \"meals\": null }";
+		setupMockResponse(200, json);
+
+		// Act
+		List<Meal> results = mealClient.filterMealsByIngredient("Rocks");
+
+		// Assert
+		assertTrue(results.isEmpty());
+	}
+
+	// fetchMealImage Tests
+
+	@Test
+	@SuppressWarnings("unchecked")
+	void fetchMealImage_ShouldDownloadBytes_AndUseCorrectSuffix() throws Exception {
+		// Arrange
+		Meal meal = new Meal();
+		meal.setStrMealThumb("http://example.com/meal.jpg");
+		String fakeImageData = "fake_image_bytes";
+		setupMockResponse(200, fakeImageData);
+
+		// Act
+		byte[] result = mealClient.fetchMealImage(meal, ImageSize.SMALL);
+
+		// Assert
+		assertArrayEquals(result, fakeImageData.getBytes(StandardCharsets.UTF_8));
+		ArgumentCaptor<HttpGet> captor = ArgumentCaptor.forClass(HttpGet.class);
+		verify(mockHttpClient).execute(captor.capture(), any(HttpClientResponseHandler.class));
+
+		String actualUrl = captor.getValue().getUri().toString();
+		assertTrue(actualUrl.endsWith("/small"), "URL should end with the size suffix");
+		assertTrue(actualUrl.contains("http://example.com/meal.jpg"), "URL should contain base path");
+	}
+
+	@Test
+	void fetchMealImage_ShouldThrowException_WhenMealUrlIsNull() {
+		// Arrange
+		Meal meal = new Meal();
+		meal.setStrMealThumb(null); // No URL
+
+		// Act & Assert
+		Exception e = assertThrows(MealApiException.class, () -> {
+			mealClient.fetchMealImage(meal, ImageSize.MEDIUM);
+		});
+
+		assertTrue(e.getMessage().contains("No image URL"));
+	}
+
 }
