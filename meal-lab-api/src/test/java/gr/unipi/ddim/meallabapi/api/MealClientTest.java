@@ -1,4 +1,4 @@
-package services.api;
+package gr.unipi.ddim.meallabapi.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -23,8 +23,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import services.exceptions.MealApiException;
-import services.models.Meal;
+import gr.unipi.ddim.meallabapi.api.MealClient;
+import gr.unipi.ddim.meallabapi.exceptions.MealApiException;
+import gr.unipi.ddim.meallabapi.models.Meal;
 
 @ExtendWith(MockitoExtension.class)
 class MealClientTest {

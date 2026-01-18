@@ -1,4 +1,4 @@
-package services.models;
+package gr.unipi.ddim.meallabapi.models;
 import java.util.ArrayList;
 import java.util.List;
 

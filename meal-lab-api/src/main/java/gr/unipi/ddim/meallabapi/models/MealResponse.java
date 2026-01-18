@@ -1,4 +1,4 @@
-package services.models;
+package gr.unipi.ddim.meallabapi.models;
 
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

@@ -1,4 +1,4 @@
-package services.api;
+package gr.unipi.ddim.meallabapi.api;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -11,9 +11,9 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import services.exceptions.MealApiException;
-import services.models.Meal;
-import services.models.MealResponse;
+import gr.unipi.ddim.meallabapi.exceptions.MealApiException;
+import gr.unipi.ddim.meallabapi.models.Meal;
+import gr.unipi.ddim.meallabapi.models.MealResponse;
 
 public class MealClient {
 	

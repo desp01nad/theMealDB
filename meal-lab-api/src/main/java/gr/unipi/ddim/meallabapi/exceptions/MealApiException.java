@@ -1,4 +1,4 @@
-package services.exceptions;
+package gr.unipi.ddim.meallabapi.exceptions;
 
 public class MealApiException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
