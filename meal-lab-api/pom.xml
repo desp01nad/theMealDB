@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>gr.unipi</groupId>
-	<artifactId>theMealDB</artifactId>
-	<version>0.0.1</version>
+	<artifactId>meal-lab-api</artifactId>
+	<version>1.0</version>
 
 	<properties>
 		<maven.compiler.source>21</maven.compiler.source>

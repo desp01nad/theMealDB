@@ -27,5 +27,7 @@ replay_pid*
 .classpath
 .project
 .settings/
-/bin/
-/target/
+bin/
+
+# Maven
+target/
