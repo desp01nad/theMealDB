@@ -13,10 +13,19 @@ public class MainLayout extends BorderPane{
 		
 		Button searchBtn = new Button("Search recipes");
 		Button randomBtn = new Button("Get a random recipe");
-		Button favoritesBtn = new Button("My recipes");
-		ToolBar navBar = new ToolBar(searchBtn, randomBtn, favoritesBtn);
+		Button favoritesBtn = new Button("Favorites");
+		Button cookedBtn = new Button("Cooked");
+		Button homeBtn = new Button("Home");
+		ToolBar navBar = new ToolBar(homeBtn, searchBtn, randomBtn, favoritesBtn, cookedBtn);
 		this.setTop(navBar);
 		
+		setCenter(new HomeView());
+		
+		homeBtn.setOnAction(event -> this.setCenter(new HomeView()));
+		
 		randomBtn.setOnAction(event -> this.setCenter(new RandomMealView(client)));
+		
+		
+		
 	}
 }
