@@ -1,8 +1,6 @@
 package gr.unipi.ddim.meallabapp.views;
 
 import java.util.List;
-import java.util.function.Consumer;
-
 import gr.unipi.ddim.meallabapi.api.MealClient;
 import gr.unipi.ddim.meallabapi.models.Meal;
 import javafx.geometry.Insets;
@@ -12,48 +10,57 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
 
-public class MealsGridView extends BorderPane {
+public final class MealsGridView extends BorderPane {
 
-	private final MealClient client;
+    private final MealClient client;
+    private final Navigation navigation;
 
-	private final Label titleLabel;
-	private final ScrollPane scroll;
-	private final TilePane grid;
+    private final Label titleLabel = new Label();
+    private final TilePane grid = new TilePane();
+    private final ScrollPane scroll = new ScrollPane();
 
-	public MealsGridView(MealClient client) {
+	public MealsGridView(MealClient client, Navigation navigation) {
+        this.client = client;
+        this.navigation = navigation;
 
-		this.client = client;
-		this.setPadding(new Insets(15));
+        titleLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
 
-		// Top components
-		titleLabel = new Label();
-		titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        grid.setHgap(20);
+        grid.setVgap(20);
+        grid.setPrefColumns(4);
+        grid.setAlignment(Pos.TOP_CENTER);
+        grid.setPadding(new Insets(10));
 
-		setTop(titleLabel);
+        scroll.setFitToWidth(true);
+        scroll.setContent(grid);
 
-		// Grid
-		grid = new TilePane();
-		grid.setHgap(20);
-		grid.setVgap(20);
-		grid.setPrefColumns(4);
-		grid.setAlignment(Pos.TOP_LEFT);
+        setMaxWidth(1100);
+        setPadding(new Insets(10, 0, 0, 0));
+        setTop(titleLabel);
+        setCenter(scroll);
 
-		// Scroll
-		scroll = new ScrollPane();
-		scroll.setFitToWidth(true);
-		scroll.setContent(grid);
+        clearResults();
+    }
 
-		setCenter(scroll);
+    public void clearResults() {
+        titleLabel.setText("Results");
+        grid.getChildren().clear();
+    }
 
-	}
+    public void setResults(String queryText, List<Meal> meals) {
+        titleLabel.setText("Results for: " + safe(queryText));
 
-	public void setResults(String queryText, List<Meal> meals, Consumer<String> onDetails) {
-		titleLabel.setText("Results for: " + queryText);
+        grid.getChildren().clear();
+        if (meals == null || meals.isEmpty()) {
+            return;
+        }
 
-		grid.getChildren().clear();
-		for (Meal meal : meals) {
-			grid.getChildren().add(new MealCardView(client, meal, onDetails));
-		}
-	}
+        for (Meal meal : meals) {
+            grid.getChildren().add(new MealCardView(client, meal, navigation));
+        }
+    }
 
+    private static String safe(String value) {
+        return value == null ? "" : value;
+    }
 }

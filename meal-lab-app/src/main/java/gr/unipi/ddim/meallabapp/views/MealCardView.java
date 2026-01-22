@@ -1,7 +1,6 @@
 package gr.unipi.ddim.meallabapp.views;
 
 import java.io.ByteArrayInputStream;
-import java.util.function.Consumer;
 
 import gr.unipi.ddim.meallabapi.api.MealClient;
 import gr.unipi.ddim.meallabapi.models.ImageSize;
@@ -14,71 +13,72 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-//MealCardView is a reusable UI component that displays a single meal and 
-//reports user actions (via Consumer<String>) without knowing application logic.
+public final class MealCardView extends VBox {
 
-public class MealCardView extends VBox {
-	private final ImageView thumbView;
-	private final Label mealTitleLabel;
-	private final Label mealIdLabel;
+	private final MealClient client;
+	private final Meal meal;
+	private final Navigation navigation;
 
-	public MealCardView(MealClient client, Meal meal, Consumer<String> onDetails) {
-		thumbView = new ImageView();
+	private final ImageView thumbView = new ImageView();
+	private final Label titleLabel = new Label();
+	private final Label idLabel = new Label();
+	private final Button detailsBtn = new Button("See Details");
 
-		// Card Styling
+	public MealCardView(MealClient client, Meal meal, Navigation navigation) {
+		this.client = client;
+		this.meal = meal;
+		this.navigation = navigation;
+
 		setSpacing(8);
 		setPadding(new Insets(10));
 		setPrefWidth(190);
 		setMaxWidth(190);
+		setStyle("-fx-border-color: #D0D0D0; -fx-border-radius: 8; -fx-background-radius: 8;");
 
-		setStyle("-fx-border-color: #cfcfcf; -fx-border-radius: 8; -fx-background-radius: 8;");
-
-		// thumbView Styling
+		thumbView.setFitWidth(190);
 		thumbView.setFitHeight(170);
-		thumbView.setFitWidth(130);
 		thumbView.setPreserveRatio(true);
+		thumbView.setSmooth(true);
 
-		// Meal Title
-		mealTitleLabel = new Label(meal.getStrMeal());
-		mealTitleLabel.setWrapText(true);
-		mealTitleLabel.setStyle("-fx-font-weight: bold;");
+		titleLabel.setText(safe(meal.getStrMeal()));
+		titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
-		// Meal Id
-		mealIdLabel = new Label();
-		if (meal.getIdMeal() != null) {
-			mealIdLabel.setText("#" + meal.getIdMeal());
-		}
+		idLabel.setText("#" + safe(meal.getIdMeal()));
+		idLabel.setStyle("-fx-text-fill: #666666;");
 
-		// Details Button
-		Button detailsBtn = new Button("See Details");
-		detailsBtn.setOnAction(event -> onDetails.accept(meal.getIdMeal()));
+		detailsBtn.setOnAction(e -> this.navigation.showMealDetails(meal.getIdMeal()));
 
-		// Footer layout
-		Region spacer = new Region();
-		HBox.setHgrow(spacer, Priority.ALWAYS);
-		HBox footer = new HBox(8, mealIdLabel, spacer, detailsBtn);
+		HBox footer = new HBox(10, idLabel, spacer(), detailsBtn);
 		footer.setAlignment(Pos.CENTER_LEFT);
 
-		this.getChildren().addAll(thumbView, mealTitleLabel, footer);
+		getChildren().addAll(thumbView, titleLabel, footer);
 
-		loadImage(client, meal);
+		loadThumbnail();
 	}
 
-	private void loadImage(MealClient client, Meal meal) {
+	private void loadThumbnail() {
 		try {
 			byte[] imageBytes = client.fetchMealImage(meal, ImageSize.SMALL);
-			if (imageBytes != null && imageBytes.length > 0) {
-				ByteArrayInputStream stream = new ByteArrayInputStream(imageBytes);
-				Image image = new Image(stream);
-				thumbView.setImage(image);
+			if (imageBytes == null || imageBytes.length == 0) {
+				thumbView.setImage(null);
+				return;
 			}
+			thumbView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
 		} catch (Exception e) {
 			System.err.println("Could not load image: " + e.getMessage());
 			thumbView.setImage(null);
 		}
+	}
 
+	private static HBox spacer() {
+		HBox spacer = new HBox();
+		HBox.setHgrow(spacer, Priority.ALWAYS);
+		return spacer;
+	}
+
+	private static String safe(String value) {
+		return value == null ? "" : value;
 	}
 }

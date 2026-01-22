@@ -9,6 +9,7 @@ import javafx.scene.text.TextAlignment;
 public class HomeView extends VBox {
 
 	public HomeView() {
+		setMaxWidth(1100);
 		setPadding(new Insets(20, 40, 200, 40));
 		setAlignment(Pos.CENTER);
 		
