@@ -19,6 +19,7 @@ public final class RandomMealView extends MealDetailsView {
         newRandomMealBtn.setOnAction(e -> fetchAndShowNewRandomMeal());
 
         getHeaderActions().getChildren().add(0, newRandomMealBtn);
+      
 
         fetchAndShowNewRandomMeal();
     }

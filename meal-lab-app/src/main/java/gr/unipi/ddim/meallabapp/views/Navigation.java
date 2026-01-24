@@ -5,6 +5,7 @@ import java.util.Deque;
 
 import gr.unipi.ddim.meallabapi.api.MealClient;
 import gr.unipi.ddim.meallabapi.models.Meal;
+import gr.unipi.ddim.meallabapp.managers.FavoritesManager;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
@@ -18,6 +19,9 @@ public final class Navigation extends BorderPane {
 	private final HomeView homeView;
 	private final SearchRecipeView searchRecipeView;
 	private final RandomMealView randomMealView;
+	private final FavoriteMealView favoriteView;
+	private final FavoritesManager favoritesManager = new FavoritesManager();
+	
 
 	public Navigation() {
 		this(new MealClient());
@@ -28,6 +32,7 @@ public final class Navigation extends BorderPane {
 		homeView = new HomeView();
 		searchRecipeView = new SearchRecipeView(client, this);
 		randomMealView = new RandomMealView(client, this);
+		favoriteView = new FavoriteMealView(client, this);
 
 		setTop(createToolbar());
 
@@ -50,12 +55,22 @@ public final class Navigation extends BorderPane {
 	public void showRandom() {
 		replaceCenter(randomMealView, true);
 	}
+	
+	public FavoritesManager favorites() {
+	    return favoritesManager;
+	}
+	
+	public void showFavorites() {
+		favoriteView.refresh();
+		replaceCenter(favoriteView, true);
+	}
+	
 
 	public void showMealDetails(String mealId) {
 		if (mealId == null || mealId.isBlank()) {
 			return;
 		}
-
+	
 		Meal meal = client.getMealById(mealId);
 
 		MealDetailsView details = new MealDetailsView(client, this);
@@ -63,6 +78,8 @@ public final class Navigation extends BorderPane {
 
 		replaceCenter(details, true);
 	}
+	
+
 
 	public void back() {
 		if (backStack.isEmpty()) {
@@ -82,6 +99,7 @@ public final class Navigation extends BorderPane {
 		homeBtn.setOnAction(e -> showHome());
 		searchBtn.setOnAction(e -> showSearch());
 		randomBtn.setOnAction(e -> showRandom());
+		favoritesBtn.setOnAction(e -> showFavorites());
 
 		return new ToolBar(homeBtn, searchBtn, randomBtn, favoritesBtn, cookedBtn);
 	}
@@ -95,4 +113,9 @@ public final class Navigation extends BorderPane {
 
 		setCenter(next);
 	}
+	
+	
+	
+
+	
 }

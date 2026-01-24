@@ -12,20 +12,22 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-public final class MealCardView extends VBox {
+public class MealCardView extends VBox {
 
 	private final MealClient client;
-	private final Meal meal;
+	protected final Meal meal;
 	private final Navigation navigation;
+	protected final VBox footer;
+	protected final HBox buttonsRow;
 
 	private final ImageView thumbView = new ImageView();
 	private final Label titleLabel = new Label();
 	private final Label idLabel = new Label();
 	private final Button detailsBtn = new Button("See Details");
-
+	
+	
 	public MealCardView(MealClient client, Meal meal, Navigation navigation) {
 		this.client = client;
 		this.meal = meal;
@@ -49,8 +51,11 @@ public final class MealCardView extends VBox {
 		idLabel.setStyle("-fx-text-fill: #666666;");
 
 		detailsBtn.setOnAction(e -> this.navigation.showMealDetails(meal.getIdMeal()));
+		
+		buttonsRow = new HBox(8, detailsBtn);
+		buttonsRow.setAlignment(Pos.BASELINE_CENTER);
 
-		HBox footer = new HBox(10, idLabel, spacer(), detailsBtn);
+		footer = new VBox(4, idLabel, buttonsRow);
 		footer.setAlignment(Pos.CENTER_LEFT);
 
 		getChildren().addAll(thumbView, titleLabel, footer);
@@ -70,12 +75,6 @@ public final class MealCardView extends VBox {
 			System.err.println("Could not load image: " + e.getMessage());
 			thumbView.setImage(null);
 		}
-	}
-
-	private static HBox spacer() {
-		HBox spacer = new HBox();
-		HBox.setHgrow(spacer, Priority.ALWAYS);
-		return spacer;
 	}
 
 	private static String safe(String value) {

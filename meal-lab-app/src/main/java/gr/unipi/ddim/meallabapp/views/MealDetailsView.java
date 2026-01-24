@@ -73,6 +73,15 @@ public class MealDetailsView extends BorderPane {
         instructionsArea.setText(safe(this.currentMeal.getStrInstructions()));
 
         loadImage(this.currentMeal);
+        
+     // update favorites button label based on current meal state
+        for (var node : headerActions.getChildren()) {
+            if (node instanceof Button b && b.getText().contains("Favorites")) {
+                boolean fav = navigation.favorites().isFavorite(meal.getIdMeal());
+                b.setText(fav ? "❤︎ Remove from Favorites" : "❤︎ Add to Favorites");
+            }
+        }
+
     }
     
 
@@ -87,6 +96,14 @@ public class MealDetailsView extends BorderPane {
         
         Button favoritesBtn = new Button("❤︎ Add to Favorites");
         Button cookedBtn = new Button("✔ Add To Cooked");
+        
+        favoritesBtn.setFocusTraversable(false);
+        favoritesBtn.setOnAction(e -> {
+            if (currentMeal == null) return;
+            
+            boolean nowFav = navigation.favorites().toggle(currentMeal);
+            favoritesBtn.setText(nowFav ? "❤︎ Remove from Favorites" : "❤︎ Add to Favorites");
+        });
         
         headerActions.getChildren().addAll(favoritesBtn, cookedBtn, backBtn);
         headerActions.setPadding(new Insets(35, 0, 0, 0));
@@ -129,7 +146,7 @@ public class MealDetailsView extends BorderPane {
 
         SplitPane split = new SplitPane(left, right);
         left.setPrefWidth(320);         
-        split.setDividerPositions(0.33); 
+        split.setDividerPositions(0.3); 
 
 
         return split;
