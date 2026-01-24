@@ -5,6 +5,7 @@ import java.util.Deque;
 
 import gr.unipi.ddim.meallabapi.api.MealClient;
 import gr.unipi.ddim.meallabapi.models.Meal;
+import gr.unipi.ddim.meallabapp.managers.CookedManager;
 import gr.unipi.ddim.meallabapp.managers.FavoritesManager;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
@@ -26,11 +27,14 @@ public final class Navigation extends BorderPane {
 	private final SearchRecipeView searchRecipeView;
 	private final RandomMealView randomMealView;
 	private final FavoriteMealView favoriteView;
+	private final CookedMealView cookedView;
+
 	private final FavoritesManager favoritesManager = new FavoritesManager();
+	private final CookedManager cookedManager = new CookedManager();
+
 	private final Label notificationLabel = new Label();
 	private final HBox notificationBox = new HBox();
 	private PauseTransition notificationTimer;
-	
 
 	public Navigation() {
 		this(new MealClient());
@@ -42,15 +46,14 @@ public final class Navigation extends BorderPane {
 		searchRecipeView = new SearchRecipeView(client, this);
 		randomMealView = new RandomMealView(client, this);
 		favoriteView = new FavoriteMealView(client, this);
+		cookedView = new CookedMealView(client, this);
 
 		setTop(createToolbar());
 
 		showHome();
-		
 
 		notificationLabel.setStyle(
-		    "-fx-background-color: #333; -fx-text-fill: white; -fx-padding: 6 14; -fx-background-radius: 8; -fx-font-size: 13px;"
-		);
+				"-fx-background-color: #333; -fx-text-fill: white; -fx-padding: 6 14; -fx-background-radius: 8; -fx-font-size: 13px;");
 
 		notificationBox.getChildren().add(notificationLabel);
 		notificationBox.setAlignment(Pos.CENTER);
@@ -62,7 +65,6 @@ public final class Navigation extends BorderPane {
 		notificationBox.setManaged(true);
 		setBottom(notificationBox);
 		BorderPane.setMargin(notificationBox, Insets.EMPTY);
-
 
 	}
 
@@ -79,24 +81,23 @@ public final class Navigation extends BorderPane {
 	}
 
 	public void showRandom() {
+		randomMealView.updateFavoriteCookedButtons();
 		replaceCenter(randomMealView, true);
 	}
-	
+
 	public FavoritesManager favorites() {
-	    return favoritesManager;
+		return favoritesManager;
 	}
-	
-	public void showFavorites() {
-		favoriteView.refresh();
-		replaceCenter(favoriteView, true);
+
+	public CookedManager cooked() {
+		return cookedManager;
 	}
-	
 
 	public void showMealDetails(String mealId) {
 		if (mealId == null || mealId.isBlank()) {
 			return;
 		}
-	
+
 		Meal meal = client.getMealById(mealId);
 
 		MealDetailsView details = new MealDetailsView(client, this);
@@ -104,28 +105,47 @@ public final class Navigation extends BorderPane {
 
 		replaceCenter(details, true);
 	}
-	
-	public void showNotification(String text) {
-		notificationLabel.setText(text);
-		
-		notificationBox.setVisible(true);
 
-	    if (notificationTimer != null) notificationTimer.stop();
-	    notificationTimer = new PauseTransition(Duration.seconds(2));
-	    notificationTimer.setOnFinished(e -> {
-	    	notificationBox.setVisible(false);
-	    });
-	    notificationTimer.playFromStart();
+	public void showFavorites() {
+		favoriteView.refresh();
+		replaceCenter(favoriteView, true);
 	}
 
+	public void showCooked() {
+		cookedView.refresh();
+		replaceCenter(cookedView, true);
+	}
 
+	public void showNotification(String text) {
+		notificationLabel.setText(text);
+
+		notificationBox.setVisible(true);
+
+		if (notificationTimer != null)
+			notificationTimer.stop();
+		notificationTimer = new PauseTransition(Duration.seconds(2));
+		notificationTimer.setOnFinished(e -> {
+			notificationBox.setVisible(false);
+		});
+		notificationTimer.playFromStart();
+	}
 
 	public void back() {
 		if (backStack.isEmpty()) {
 			showHome();
 			return;
 		}
-		replaceCenter(backStack.pop(), false);
+
+		Node prevPage = backStack.pop();
+		if (prevPage instanceof MealDetailsView) {
+			((MealDetailsView) prevPage).updateFavoriteCookedButtons();
+		} else if (prevPage instanceof FavoriteMealView) {
+			((FavoriteMealView) prevPage).refresh();
+		} else if (prevPage instanceof CookedMealView) {
+			((CookedMealView) prevPage).refresh();
+		}
+
+		replaceCenter(prevPage, false);
 	}
 
 	private ToolBar createToolbar() {
@@ -139,6 +159,7 @@ public final class Navigation extends BorderPane {
 		searchBtn.setOnAction(e -> showSearch());
 		randomBtn.setOnAction(e -> showRandom());
 		favoritesBtn.setOnAction(e -> showFavorites());
+		cookedBtn.setOnAction(e -> showCooked());
 
 		return new ToolBar(homeBtn, searchBtn, randomBtn, favoritesBtn, cookedBtn);
 	}

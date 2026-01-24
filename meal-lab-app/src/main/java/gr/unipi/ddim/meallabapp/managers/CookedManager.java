@@ -4,31 +4,34 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gr.unipi.ddim.meallabapi.models.Meal;
 
-/**
- * Keeps favorites in-memory + persists them to a small JSON file.
+/*
+ * Keeps cooked meals in-memory + persists them to a small JSON file.
  * We store only the fields we need for the cards (id, name, thumb).
  */
-public final class FavoritesManager {
-
-    private final Map<String, Meal> favoritesById = new LinkedHashMap<>();
+public class CookedManager {
+	
+	private final Map<String, Meal> cookedById = new LinkedHashMap<>();
     private final ObjectMapper mapper = new ObjectMapper();
     private final Path filePath;
 
-    public FavoritesManager() {
+    public CookedManager() {
         this.filePath = defaultFilePath();
         load();
     }
 
-    public boolean isFavorite(String mealId) {
+    public boolean isCooked(String mealId) {
         if (mealId == null || mealId.isBlank()) return false;
-        return favoritesById.containsKey(mealId);
+        return cookedById.containsKey(mealId);
     }
 
     public void add(Meal meal) {
@@ -40,24 +43,24 @@ public final class FavoritesManager {
         light.setStrMeal(meal.getStrMeal());
         light.setStrMealThumb(meal.getStrMealThumb());
 
-        favoritesById.put(light.getIdMeal(), light);
+        cookedById.put(light.getIdMeal(), light);
         save();
     }
 
     public void remove(String mealId) {
         if (mealId == null || mealId.isBlank()) return;
-        if (favoritesById.remove(mealId) != null) {
+        if (cookedById.remove(mealId) != null) {
             save();
         }
     }
 
-    /** Convenience: add if missing, otherwise remove. Returns new state (true = now favorite). */
-    public boolean toggleFavs(Meal meal) {
+    /** Convenience: add if missing, otherwise remove. Returns new state (true = now cooked). */
+    public boolean toggleCooked(Meal meal) {
         if (meal == null || meal.getIdMeal() == null || meal.getIdMeal().isBlank()) return false;
 
         String id = meal.getIdMeal();
-        if (favoritesById.containsKey(id)) {
-            favoritesById.remove(id);
+        if (cookedById.containsKey(id)) {
+        	cookedById.remove(id);
             save();
             return false;
         }
@@ -67,7 +70,7 @@ public final class FavoritesManager {
     }
 
     public List<Meal> getAll() {
-        return new ArrayList<>(favoritesById.values());
+        return new ArrayList<>(cookedById.values());
     }
 
     
@@ -75,7 +78,7 @@ public final class FavoritesManager {
 
     private static Path defaultFilePath() {
         Path dir = Paths.get(System.getProperty("user.home"), ".meallab");
-        return dir.resolve("favorites.json");
+        return dir.resolve("cooked.json");
     }
 
     private void load() {
@@ -86,17 +89,17 @@ public final class FavoritesManager {
             if (bytes.length == 0) return;
 
             List<Meal> list = mapper.readValue(bytes, new TypeReference<List<Meal>>() {});
-            favoritesById.clear();
+            cookedById.clear();
             if (list != null) {
                 for (Meal m : list) {
                     if (m != null && m.getIdMeal() != null && !m.getIdMeal().isBlank()) {
-                        favoritesById.put(m.getIdMeal(), m);
+                    	cookedById.put(m.getIdMeal(), m);
                     }
                 }
             }
         } catch (Exception e) {
             // don't crash the app because of a broken file
-            System.err.println("Could not load favorites: " + e.getMessage());
+            System.err.println("Could not load cooked meals: " + e.getMessage());
         }
     }
 
@@ -106,7 +109,10 @@ public final class FavoritesManager {
             List<Meal> list = getAll();
             mapper.writerWithDefaultPrettyPrinter().writeValue(filePath.toFile(), list);
         } catch (IOException e) {
-            System.err.println("Could not save favorites: " + e.getMessage());
+            System.err.println("Could not save cooked meals: " + e.getMessage());
         }
     }
 }
+
+
+

@@ -7,18 +7,19 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
-public class FavoriteMealView extends BorderPane {
+public class CookedMealView extends BorderPane {
 	private final MealClient client;
 	private final Navigation navigation;
 
-	private final MealsGridView favoritesView;
-
-	public FavoriteMealView(MealClient client, Navigation navigation) {
+	private final MealsGridView cookedView;
+	
+	
+	public CookedMealView(MealClient client, Navigation navigation) {
 		this.client = client;
 		this.navigation = navigation;
-		this.favoritesView = new MealsGridView(meal -> new FavoriteMealCardView(this.client, meal, this.navigation));
+		this.cookedView = new MealsGridView(meal -> new CookedMealCardView(this.client, meal, this.navigation));
 
-		Label pageTitle = new Label("Favorites");
+		Label pageTitle = new Label("Cooked Meals");
 		pageTitle.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
 
 		HBox header = new HBox(12, pageTitle);
@@ -28,11 +29,11 @@ public class FavoriteMealView extends BorderPane {
 		setMaxWidth(1100);
 		setPadding(new Insets(20));
 		setTop(header);
-		setCenter(favoritesView);
+		setCenter(cookedView);
 	}
 
 	public void refresh() {
-		favoritesView.setResultsWithTitle("", navigation.favorites().getAll());
+		cookedView.setResultsWithTitle("", navigation.cooked().getAll());
 	}
 
 }
