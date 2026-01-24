@@ -24,6 +24,8 @@ import javafx.util.Duration;
 public final class Navigation extends BorderPane {
 
 	private final MealClient client;
+
+	private static final int MAX_BACK_STACK_SIZE = 20;
 	private final Deque<Node> backStack = new ArrayDeque<>();
 
 	private final ExecutorService backgroundThread = Executors.newSingleThreadExecutor(r -> {
@@ -194,6 +196,9 @@ public final class Navigation extends BorderPane {
 		Node current = getCenter();
 
 		if (pushCurrent && current != null && current != next) {
+			if (backStack.size() >= MAX_BACK_STACK_SIZE) {
+				backStack.removeLast();
+			}
 			backStack.push(current);
 		}
 
