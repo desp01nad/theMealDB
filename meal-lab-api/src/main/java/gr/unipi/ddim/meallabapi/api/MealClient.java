@@ -85,7 +85,8 @@ public class MealClient {
 	}
 
 	public List<Meal> searchMealsByName(String name) {
-		MealResponse response = executeRequest(BASE_URL + "/search.php?s=" + name);
+		String formatted = name.trim().replaceAll("\\s+", "_");
+		MealResponse response = executeRequest(BASE_URL + "/search.php?s=" + formatted);
 		if (response.getMeals() == null) {
 			return Collections.emptyList();
 		}
@@ -93,7 +94,8 @@ public class MealClient {
 	}
 
 	public List<Meal> filterMealsByIngredient(String ingredient) {
-		MealResponse response = executeRequest(BASE_URL + "/filter.php?i=" + ingredient);
+		String formatted = ingredient.trim().replaceAll("\\s+", "_");
+		MealResponse response = executeRequest(BASE_URL + "/filter.php?i=" + formatted);
 		if (response.getMeals() == null) {
 			return Collections.emptyList();
 		}
@@ -103,13 +105,13 @@ public class MealClient {
 	public byte[] fetchMealImage(Meal meal, ImageSize size) {
 		String baseUrl = meal.getStrMealThumb();
 
-        if (baseUrl == null || baseUrl.trim().isEmpty()) {
-            throw new MealApiException("No image URL present for meal: " + meal.getStrMeal());
-        }
+		if (baseUrl == null || baseUrl.trim().isEmpty()) {
+			throw new MealApiException("No image URL present for meal: " + meal.getStrMeal());
+		}
 
-        String finalUrl = baseUrl + size.getUrlSuffix();
-        
-        HttpGet request = new HttpGet(finalUrl);
+		String finalUrl = baseUrl + size.getUrlSuffix();
+
+		HttpGet request = new HttpGet(finalUrl);
 
 		try {
 			return this.httpClient.execute(request, response -> {
