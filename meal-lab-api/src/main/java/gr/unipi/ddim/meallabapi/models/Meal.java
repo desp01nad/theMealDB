@@ -1,4 +1,5 @@
 package gr.unipi.ddim.meallabapi.models;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -6,79 +7,98 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Meal {
-	// --- Required Fields --- 
+	// --- Required Fields ---
 	private String idMeal;
 	private String strMeal;
 	private String strCategory;
 	private String strArea;
-    private String strInstructions;
-    private String strMealThumb; 
-    private String strYoutube;
-    
-    // --- Ingredients & Measures ---
-    private String strIngredient1;  private String strMeasure1;
-    private String strIngredient2;  private String strMeasure2;
-    private String strIngredient3;  private String strMeasure3;
-    private String strIngredient4;  private String strMeasure4;
-    private String strIngredient5;  private String strMeasure5;
-    private String strIngredient6;  private String strMeasure6;
-    private String strIngredient7;  private String strMeasure7;
-    private String strIngredient8;  private String strMeasure8; 
-    private String strIngredient9;  private String strMeasure9; 
-    private String strIngredient10; private String strMeasure10;
-    
-    private String strIngredient11; private String strMeasure11;
-    private String strIngredient12; private String strMeasure12;
-    private String strIngredient13; private String strMeasure13;
-    private String strIngredient14; private String strMeasure14;
-    private String strIngredient15; private String strMeasure15;
-    private String strIngredient16; private String strMeasure16;
-    private String strIngredient17; private String strMeasure17;
-    private String strIngredient18; private String strMeasure18;
-    private String strIngredient19; private String strMeasure19;
-    private String strIngredient20; private String strMeasure20;
-    
-    
-    // This method combines all 20 ingredient/measure pairs into a clean List.
-    public List<String> getIngredientsList() {
-        List<String> ingredients = new ArrayList<>();  
-        addIfValid(ingredients, strIngredient1, strMeasure1);
-        addIfValid(ingredients, strIngredient2, strMeasure2);
-        addIfValid(ingredients, strIngredient3, strMeasure3);
-        addIfValid(ingredients, strIngredient4, strMeasure4);
-        addIfValid(ingredients, strIngredient5, strMeasure5);
-        addIfValid(ingredients, strIngredient6, strMeasure6);
-        addIfValid(ingredients, strIngredient7, strMeasure7);
-        addIfValid(ingredients, strIngredient8, strMeasure8);
-        addIfValid(ingredients, strIngredient9, strMeasure9);
-        addIfValid(ingredients, strIngredient10, strMeasure10);
-        
-        addIfValid(ingredients, strIngredient11, strMeasure11);
-        addIfValid(ingredients, strIngredient12, strMeasure12);
-        addIfValid(ingredients, strIngredient13, strMeasure13);
-        addIfValid(ingredients, strIngredient14, strMeasure14);
-        addIfValid(ingredients, strIngredient15, strMeasure15);
-        addIfValid(ingredients, strIngredient16, strMeasure16);
-        addIfValid(ingredients, strIngredient17, strMeasure17);
-        addIfValid(ingredients, strIngredient18, strMeasure18);
-        addIfValid(ingredients, strIngredient19, strMeasure19);
-        addIfValid(ingredients, strIngredient20, strMeasure20);
+	private String strInstructions;
+	private String strMealThumb;
+	private String strYoutube;
 
-        return ingredients;
-    }
-    
-    // Helper method to filter empty data and format the string
-    private void addIfValid(List<String> list, String ingredient, String measure) {
-        if (ingredient != null && !ingredient.trim().isEmpty()) {
-            String entry = ingredient;
-            if (measure != null && !measure.trim().isEmpty()) {
-                entry += " - " + measure;
-            }
-            list.add(entry);
-        }
-    }
-    
-    // --- Getters & Setters --- 
+	// --- Ingredients & Measures ---
+	private String strIngredient1;
+	private String strMeasure1;
+	private String strIngredient2;
+	private String strMeasure2;
+	private String strIngredient3;
+	private String strMeasure3;
+	private String strIngredient4;
+	private String strMeasure4;
+	private String strIngredient5;
+	private String strMeasure5;
+	private String strIngredient6;
+	private String strMeasure6;
+	private String strIngredient7;
+	private String strMeasure7;
+	private String strIngredient8;
+	private String strMeasure8;
+	private String strIngredient9;
+	private String strMeasure9;
+	private String strIngredient10;
+	private String strMeasure10;
+
+	private String strIngredient11;
+	private String strMeasure11;
+	private String strIngredient12;
+	private String strMeasure12;
+	private String strIngredient13;
+	private String strMeasure13;
+	private String strIngredient14;
+	private String strMeasure14;
+	private String strIngredient15;
+	private String strMeasure15;
+	private String strIngredient16;
+	private String strMeasure16;
+	private String strIngredient17;
+	private String strMeasure17;
+	private String strIngredient18;
+	private String strMeasure18;
+	private String strIngredient19;
+	private String strMeasure19;
+	private String strIngredient20;
+	private String strMeasure20;
+
+	// This method combines all 20 ingredient/measure pairs into a clean List.
+	public List<String> getIngredientsList() {
+		List<String> ingredients = new ArrayList<>();
+		addIfValid(ingredients, strIngredient1, strMeasure1);
+		addIfValid(ingredients, strIngredient2, strMeasure2);
+		addIfValid(ingredients, strIngredient3, strMeasure3);
+		addIfValid(ingredients, strIngredient4, strMeasure4);
+		addIfValid(ingredients, strIngredient5, strMeasure5);
+		addIfValid(ingredients, strIngredient6, strMeasure6);
+		addIfValid(ingredients, strIngredient7, strMeasure7);
+		addIfValid(ingredients, strIngredient8, strMeasure8);
+		addIfValid(ingredients, strIngredient9, strMeasure9);
+		addIfValid(ingredients, strIngredient10, strMeasure10);
+
+		addIfValid(ingredients, strIngredient11, strMeasure11);
+		addIfValid(ingredients, strIngredient12, strMeasure12);
+		addIfValid(ingredients, strIngredient13, strMeasure13);
+		addIfValid(ingredients, strIngredient14, strMeasure14);
+		addIfValid(ingredients, strIngredient15, strMeasure15);
+		addIfValid(ingredients, strIngredient16, strMeasure16);
+		addIfValid(ingredients, strIngredient17, strMeasure17);
+		addIfValid(ingredients, strIngredient18, strMeasure18);
+		addIfValid(ingredients, strIngredient19, strMeasure19);
+		addIfValid(ingredients, strIngredient20, strMeasure20);
+
+		return ingredients;
+	}
+
+	// Helper method to filter empty data and format the string
+	private void addIfValid(List<String> list, String ingredient, String measure) {
+		if (ingredient != null && !ingredient.trim().isEmpty()) {
+			String entry = ingredient;
+			if (measure != null && !measure.trim().isEmpty()) {
+				entry += " - " + measure;
+			}
+			list.add(entry);
+		}
+	}
+
+	// --- Getters & Setters ---
 	public String getIdMeal() {
 		return idMeal;
 	}
@@ -454,11 +474,5 @@ public class Meal {
 	public void setStrMeasure20(String strMeasure20) {
 		this.strMeasure20 = strMeasure20;
 	}
-    
-       
-    
-    
-    
-    
-    
+
 }

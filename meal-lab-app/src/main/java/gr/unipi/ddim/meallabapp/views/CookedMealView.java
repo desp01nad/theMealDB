@@ -12,8 +12,7 @@ public class CookedMealView extends BorderPane {
 	private final Navigation navigation;
 
 	private final MealsGridView cookedView;
-	
-	
+
 	public CookedMealView(MealClient client, Navigation navigation) {
 		this.client = client;
 		this.navigation = navigation;

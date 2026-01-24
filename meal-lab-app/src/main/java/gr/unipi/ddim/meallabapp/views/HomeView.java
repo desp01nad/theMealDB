@@ -12,41 +12,38 @@ public class HomeView extends VBox {
 		setMaxWidth(1100);
 		setPadding(new Insets(20, 40, 200, 40));
 		setAlignment(Pos.CENTER);
-		
+
 		// Top text group
 		VBox headerBox = new VBox(12);
-        headerBox.setAlignment(Pos.CENTER);
-		
-		Label upertitle = new Label("Welcome to");
-        upertitle.setStyle("-fx-font-size: 18px;");
-        upertitle.setAlignment(Pos.CENTER);
-		
-		Label title = new Label("Meal Lab");
-        title.setStyle("-fx-font-size: 36px; -fx-font-weight: bold;");
-        title.setAlignment(Pos.CENTER);
+		headerBox.setAlignment(Pos.CENTER);
 
-        
-        Label subtitle = new Label("What’s cooking?");
-        subtitle.setStyle("-fx-font-size: 22px;");
-        subtitle.setAlignment(Pos.CENTER);
-        
-        headerBox.getChildren().addAll(upertitle, title, subtitle);
-        
-        // Bottom text 
-        Label description = new Label(
-                "Search our recipe database using the navigation bar above.\n\n" +
-                "Discover new recipes, get a random meal,\n" +
-                "save your favorites, and track the recipes you’ve cooked."
-            );
-        description.setStyle("-fx-font-size: 16px;");
-        description.setWrapText(true);
-        description.setMaxWidth(500);
-        description.setAlignment(Pos.CENTER);
-        description.setTextAlignment(TextAlignment.CENTER);
-            
-       // Main Layout
-       setSpacing(40); 
-       getChildren().addAll(headerBox, description);
-	
+		Label upertitle = new Label("Welcome to");
+		upertitle.setStyle("-fx-font-size: 18px;");
+		upertitle.setAlignment(Pos.CENTER);
+
+		Label title = new Label("Meal Lab");
+		title.setStyle("-fx-font-size: 36px; -fx-font-weight: bold;");
+		title.setAlignment(Pos.CENTER);
+
+		Label subtitle = new Label("What’s cooking?");
+		subtitle.setStyle("-fx-font-size: 22px;");
+		subtitle.setAlignment(Pos.CENTER);
+
+		headerBox.getChildren().addAll(upertitle, title, subtitle);
+
+		// Bottom text
+		Label description = new Label("Search our recipe database using the navigation bar above.\n\n"
+				+ "Discover new recipes, get a random meal,\n"
+				+ "save your favorites, and track the recipes you’ve cooked.");
+		description.setStyle("-fx-font-size: 16px;");
+		description.setWrapText(true);
+		description.setMaxWidth(500);
+		description.setAlignment(Pos.CENTER);
+		description.setTextAlignment(TextAlignment.CENTER);
+
+		// Main Layout
+		setSpacing(40);
+		getChildren().addAll(headerBox, description);
+
 	}
 }
