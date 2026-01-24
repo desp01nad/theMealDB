@@ -39,6 +39,14 @@
 			<scope>compile</scope>
 		</dependency>
 
+		<!--
+		https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.20.1</version>
+		</dependency>
+
 		<dependency>
 			<groupId>gr.unipi.ddim</groupId>
 			<artifactId>meal-lab-api</artifactId>
