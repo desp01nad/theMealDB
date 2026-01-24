@@ -13,6 +13,10 @@ public class CookedMealCardView extends MealCardView {
 
 		removeBtn.setOnAction(event -> {
 			navigation.cooked().remove(meal.getIdMeal());
+
+			String name = meal.getStrMeal();
+			navigation.showNotification("✕ " + name + " removed from Cooked");
+
 			navigation.showCooked();
 		});
 

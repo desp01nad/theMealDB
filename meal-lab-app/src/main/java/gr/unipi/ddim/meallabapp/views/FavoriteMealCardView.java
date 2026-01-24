@@ -5,17 +5,21 @@ import gr.unipi.ddim.meallabapi.models.Meal;
 import javafx.scene.control.Button;
 
 public class FavoriteMealCardView extends MealCardView {
-	
+
 	private final Button removeBtn = new Button("Remove");
-		
+
 	public FavoriteMealCardView(MealClient client, Meal meal, Navigation navigation) {
 		super(client, meal, navigation);
-		
+
 		removeBtn.setOnAction(event -> {
 			navigation.favorites().remove(meal.getIdMeal());
-		    navigation.showFavorites(); 
-        });
-		
+
+			String name = meal.getStrMeal();
+			navigation.showNotification("✕ " + name + " removed from Favorites");
+
+			navigation.showFavorites();
+		});
+
 		buttonsRow.getChildren().add(0, removeBtn);
 	}
 }
