@@ -2,12 +2,15 @@ package gr.unipi.ddim.meallabapp.views;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import gr.unipi.ddim.meallabapi.api.MealClient;
 import gr.unipi.ddim.meallabapi.models.Meal;
 import gr.unipi.ddim.meallabapp.managers.CookedManager;
 import gr.unipi.ddim.meallabapp.managers.FavoritesManager;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -22,6 +25,12 @@ public final class Navigation extends BorderPane {
 
 	private final MealClient client;
 	private final Deque<Node> backStack = new ArrayDeque<>();
+
+	private final ExecutorService backgroundThread = Executors.newSingleThreadExecutor(r -> {
+		Thread t = new Thread(r, "bg-worker");
+		t.setDaemon(true);
+		return t;
+	});
 
 	private final HomeView homeView;
 	private final SearchRecipeView searchRecipeView;
@@ -94,16 +103,33 @@ public final class Navigation extends BorderPane {
 	}
 
 	public void showMealDetails(String mealId) {
-		if (mealId == null || mealId.isBlank()) {
+		if (mealId == null || mealId.isBlank())
 			return;
-		}
-
-		Meal meal = client.getMealById(mealId);
 
 		MealDetailsView details = new MealDetailsView(client, this);
-		details.showMeal(meal);
-
+		details.showMeal(null);
 		replaceCenter(details, true);
+
+		backgroundThread.execute(() -> {
+			Meal meal = null;
+			try {
+				meal = client.getMealById(mealId);
+			} catch (Exception ex) {
+				System.err.println("Failed to load meal details: " + ex.getMessage());
+			}
+
+			Meal finalMeal = meal;
+			Platform.runLater(() -> {
+				if (getCenter() != details)
+					return;
+				if (finalMeal == null) {
+					details.showMeal(null);
+					showNotification("✕ Could not load meal details");
+					return;
+				}
+				details.showMeal(finalMeal);
+			});
+		});
 	}
 
 	public void showFavorites() {
@@ -172,6 +198,10 @@ public final class Navigation extends BorderPane {
 		}
 
 		setCenter(next);
+	}
+
+	public ExecutorService backgroundThread() {
+		return backgroundThread;
 	}
 
 }

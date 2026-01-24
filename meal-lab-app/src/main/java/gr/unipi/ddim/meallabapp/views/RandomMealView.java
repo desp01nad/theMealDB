@@ -9,69 +9,66 @@ import javafx.scene.control.Button;
 
 public final class RandomMealView extends MealDetailsView {
 
-    private final Button newRandomMealBtn = new Button("⟳ New Random Recipe");
-    private String lastMealId;
+	private final Button newRandomMealBtn = new Button("⟳ New Random Recipe");
+	private String lastMealId;
 
-    public RandomMealView(MealClient client, Navigation navigation) {
-        super(client, navigation);
+	public RandomMealView(MealClient client, Navigation navigation) {
+		super(client, navigation);
 
-        newRandomMealBtn.setFocusTraversable(false);
-        newRandomMealBtn.setOnAction(e -> fetchAndShowNewRandomMeal());
+		newRandomMealBtn.setFocusTraversable(false);
+		newRandomMealBtn.setOnAction(e -> fetchAndShowNewRandomMeal());
 
-        getHeaderActions().getChildren().add(0, newRandomMealBtn);
-      
+		getHeaderActions().getChildren().add(0, newRandomMealBtn);
 
-        fetchAndShowNewRandomMeal();
-    }
+		fetchAndShowNewRandomMeal();
+	}
 
-    private void fetchAndShowNewRandomMeal() {
-        newRandomMealBtn.setDisable(true);
-        showMeal(null);
+	private void fetchAndShowNewRandomMeal() {
+		newRandomMealBtn.setDisable(true);
+		showMeal(null);
 
-        Task<Meal> task = new Task<>() {
-            @Override
-            protected Meal call() {
-                Meal meal;
-                do {
-                    meal = client().getRandomMeal();
-                } while (sameAsLast(meal));
-                return meal;
-            }
-        };
+		Task<Meal> task = new Task<>() {
+			@Override
+			protected Meal call() {
+				Meal meal;
+				do {
+					meal = client().getRandomMeal();
+				} while (sameAsLast(meal));
+				return meal;
+			}
+		};
 
-        task.setOnSucceeded(e -> {
-            Meal meal = task.getValue();
-            if (meal == null) {
-                showMeal(null);
-                newRandomMealBtn.setDisable(false);
-                return;
-            }
+		task.setOnSucceeded(e -> {
+			Meal meal = task.getValue();
+			if (meal == null) {
+				showMeal(null);
+				newRandomMealBtn.setDisable(false);
+				return;
+			}
 
-            showMeal(meal);
-            lastMealId = meal.getIdMeal();
-            newRandomMealBtn.setDisable(false);
-        });
+			showMeal(meal);
+			lastMealId = meal.getIdMeal();
+			newRandomMealBtn.setDisable(false);
+		});
 
-        task.setOnFailed(e -> {
-            showMeal(null);
-            newRandomMealBtn.setDisable(false);
-        });
+		task.setOnFailed(e -> {
+			showMeal(null);
+			newRandomMealBtn.setDisable(false);
+		});
 
-        Thread t = new Thread(task, "random-meal-loader");
-        t.setDaemon(true);
-        t.start();
-    }
+		this.getNavitation().backgroundThread().execute(task);
+	}
 
-    private boolean sameAsLast(Meal meal) {
-        if (meal == null) {
-            return false;
-        }
+	private boolean sameAsLast(Meal meal) {
+		if (meal == null) {
+			return false;
+		}
 
-        String id = meal.getIdMeal();
-        if (id == null || id.isBlank()) {
-            return false;
-        }
+		String id = meal.getIdMeal();
+		if (id == null || id.isBlank()) {
+			return false;
+		}
 
-        return Objects.equals(id, lastMealId);
-    }
+		return Objects.equals(id, lastMealId);
+	}
 }

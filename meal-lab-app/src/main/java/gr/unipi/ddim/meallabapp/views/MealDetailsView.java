@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import gr.unipi.ddim.meallabapi.api.MealClient;
 import gr.unipi.ddim.meallabapi.models.ImageSize;
 import gr.unipi.ddim.meallabapi.models.Meal;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -184,17 +185,41 @@ public class MealDetailsView extends BorderPane {
 	}
 
 	private void loadImage(Meal meal) {
-		try {
-			byte[] imageBytes = client.fetchMealImage(meal, ImageSize.MEDIUM);
-			if (imageBytes == null || imageBytes.length == 0) {
-				mealImageView.setImage(null);
-				return;
+		mealImageView.setImage(null);
+
+		if (meal == null)
+			return;
+
+		String url = meal.getStrMealThumb();
+		if (url == null || url.isBlank())
+			return;
+
+		final String expectedMealId = meal.getIdMeal();
+
+		navigation.backgroundThread().execute(() -> {
+			byte[] imageBytes = null;
+
+			try {
+				imageBytes = client.fetchMealImage(meal, ImageSize.MEDIUM);
+			} catch (Exception e) {
+				System.err.println("Could not load image: " + e.getMessage());
 			}
-			mealImageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
-		} catch (Exception e) {
-			System.err.println("Could not load image: " + e.getMessage());
-			mealImageView.setImage(null);
-		}
+
+			final byte[] finalBytes = imageBytes;
+
+			Platform.runLater(() -> {
+				if (currentMeal == null || expectedMealId == null || !expectedMealId.equals(currentMeal.getIdMeal())) {
+					return;
+				}
+
+				if (finalBytes == null || finalBytes.length == 0) {
+					mealImageView.setImage(null);
+					return;
+				}
+
+				mealImageView.setImage(new Image(new ByteArrayInputStream(finalBytes)));
+			});
+		});
 	}
 
 	private void clear() {
@@ -208,5 +233,9 @@ public class MealDetailsView extends BorderPane {
 
 	private static String safe(String value) {
 		return value == null ? "" : value;
+	}
+
+	protected Navigation getNavitation() {
+		return navigation;
 	}
 }

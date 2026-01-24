@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import gr.unipi.ddim.meallabapi.api.MealClient;
 import gr.unipi.ddim.meallabapi.models.ImageSize;
 import gr.unipi.ddim.meallabapi.models.Meal;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -26,8 +27,7 @@ public class MealCardView extends VBox {
 	private final Label titleLabel = new Label();
 	private final Label idLabel = new Label();
 	private final Button detailsBtn = new Button("See Details");
-	
-	
+
 	public MealCardView(MealClient client, Meal meal, Navigation navigation) {
 		this.client = client;
 		this.meal = meal;
@@ -51,7 +51,7 @@ public class MealCardView extends VBox {
 		idLabel.setStyle("-fx-text-fill: #666666;");
 
 		detailsBtn.setOnAction(e -> this.navigation.showMealDetails(meal.getIdMeal()));
-		
+
 		buttonsRow = new HBox(8, detailsBtn);
 		buttonsRow.setAlignment(Pos.CENTER);
 
@@ -64,17 +64,41 @@ public class MealCardView extends VBox {
 	}
 
 	private void loadThumbnail() {
-		try {
-			byte[] imageBytes = client.fetchMealImage(meal, ImageSize.SMALL);
-			if (imageBytes == null || imageBytes.length == 0) {
-				thumbView.setImage(null);
-				return;
+		thumbView.setImage(null);
+
+		if (meal == null)
+			return;
+
+		String url = meal.getStrMealThumb();
+		if (url == null || url.isBlank())
+			return;
+
+		final String expectedMealId = meal.getIdMeal();
+
+		navigation.backgroundThread().execute(() -> {
+			byte[] imageBytes = null;
+
+			try {
+				imageBytes = client.fetchMealImage(meal, ImageSize.SMALL);
+			} catch (Exception e) {
+				System.err.println("Could not load image: " + e.getMessage());
 			}
-			thumbView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
-		} catch (Exception e) {
-			System.err.println("Could not load image: " + e.getMessage());
-			thumbView.setImage(null);
-		}
+
+			final byte[] finalBytes = imageBytes;
+
+			Platform.runLater(() -> {
+				if (meal == null || expectedMealId == null || !expectedMealId.equals(meal.getIdMeal())) {
+					return;
+				}
+
+				if (finalBytes == null || finalBytes.length == 0) {
+					thumbView.setImage(null);
+					return;
+				}
+
+				thumbView.setImage(new Image(new ByteArrayInputStream(finalBytes)));
+			});
+		});
 	}
 
 	private static String safe(String value) {

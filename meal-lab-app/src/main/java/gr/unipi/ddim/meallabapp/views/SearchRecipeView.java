@@ -1,8 +1,10 @@
 package gr.unipi.ddim.meallabapp.views;
 
 import java.util.List;
+
 import gr.unipi.ddim.meallabapi.api.MealClient;
 import gr.unipi.ddim.meallabapi.models.Meal;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -52,7 +54,6 @@ public final class SearchRecipeView extends BorderPane {
 		queryField.setPrefColumnCount(4);
 		queryField.setPrefWidth(300);
 
-
 		return bar;
 	}
 
@@ -63,14 +64,31 @@ public final class SearchRecipeView extends BorderPane {
 			return;
 		}
 
-		List<Meal> meals;
+		searchBtn.setDisable(true);
 
-		if (byNameBtn.isSelected()) {
-			meals = client.searchMealsByName(query);
-		} else {
-			meals = client.filterMealsByIngredient(query);
-		}
+		Task<List<Meal>> task = new Task<>() {
+			@Override
+			protected List<Meal> call() {
+				if (byNameBtn.isSelected()) {
+					return client.searchMealsByName(query);
+				} else {
+					return client.filterMealsByIngredient(query);
+				}
+			}
+		};
 
-		resultsView.setResults(query, meals);
+		task.setOnSucceeded(e -> {
+			resultsView.setResults(query, task.getValue());
+			searchBtn.setDisable(false);
+		});
+
+		task.setOnFailed(e -> {
+			resultsView.clearResults();
+			searchBtn.setDisable(false);
+
+			navigation.showNotification("✕ Search failed");
+		});
+
+		navigation.backgroundThread().execute(task);
 	}
 }
