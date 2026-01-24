@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
@@ -43,6 +44,10 @@ public class MealDetailsView extends BorderPane {
         setPadding(new Insets(20));
         setTop(createHeader());
         setCenter(createContent());
+        
+        Pane bottomSpacer = new Pane();
+        bottomSpacer.setMinHeight(20); 
+        setBottom(bottomSpacer);
 
         instructionsArea.setWrapText(true);
         instructionsArea.setEditable(false);
@@ -79,6 +84,7 @@ public class MealDetailsView extends BorderPane {
             if (node instanceof Button b && b.getText().contains("Favorites")) {
                 boolean fav = navigation.favorites().isFavorite(meal.getIdMeal());
                 b.setText(fav ? "❤︎ Remove from Favorites" : "❤︎ Add to Favorites");
+                
             }
         }
 
@@ -103,6 +109,8 @@ public class MealDetailsView extends BorderPane {
             
             boolean nowFav = navigation.favorites().toggle(currentMeal);
             favoritesBtn.setText(nowFav ? "❤︎ Remove from Favorites" : "❤︎ Add to Favorites");
+            String name = currentMeal.getStrMeal();
+            navigation.showNotification(nowFav ? "✔ " + name + " added to Favorites " : "✕ " + name + " removed from Favorites ");
         });
         
         headerActions.getChildren().addAll(favoritesBtn, cookedBtn, backBtn);
@@ -146,7 +154,7 @@ public class MealDetailsView extends BorderPane {
 
         SplitPane split = new SplitPane(left, right);
         left.setPrefWidth(320);         
-        split.setDividerPositions(0.3); 
+        split.setDividerPositions(0.33); 
 
 
         return split;

@@ -53,7 +53,7 @@ public class MealCardView extends VBox {
 		detailsBtn.setOnAction(e -> this.navigation.showMealDetails(meal.getIdMeal()));
 		
 		buttonsRow = new HBox(8, detailsBtn);
-		buttonsRow.setAlignment(Pos.BASELINE_CENTER);
+		buttonsRow.setAlignment(Pos.CENTER);
 
 		footer = new VBox(4, idLabel, buttonsRow);
 		footer.setAlignment(Pos.CENTER_LEFT);

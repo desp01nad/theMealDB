@@ -6,10 +6,16 @@ import java.util.Deque;
 import gr.unipi.ddim.meallabapi.api.MealClient;
 import gr.unipi.ddim.meallabapi.models.Meal;
 import gr.unipi.ddim.meallabapp.managers.FavoritesManager;
+import javafx.animation.PauseTransition;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.util.Duration;
 
 public final class Navigation extends BorderPane {
 
@@ -21,6 +27,9 @@ public final class Navigation extends BorderPane {
 	private final RandomMealView randomMealView;
 	private final FavoriteMealView favoriteView;
 	private final FavoritesManager favoritesManager = new FavoritesManager();
+	private final Label notificationLabel = new Label();
+	private final HBox notificationBox = new HBox();
+	private PauseTransition notificationTimer;
 	
 
 	public Navigation() {
@@ -37,6 +46,23 @@ public final class Navigation extends BorderPane {
 		setTop(createToolbar());
 
 		showHome();
+		
+
+		notificationLabel.setStyle(
+		    "-fx-background-color: #333; -fx-text-fill: white; -fx-padding: 6 14; -fx-background-radius: 8; -fx-font-size: 13px;"
+		);
+
+		notificationBox.getChildren().add(notificationLabel);
+		notificationBox.setAlignment(Pos.CENTER);
+		notificationBox.setPadding(Insets.EMPTY);
+		notificationBox.setMinHeight(40);
+		notificationBox.setPrefHeight(40);
+		notificationBox.setMaxHeight(40);
+		notificationBox.setVisible(false);
+		notificationBox.setManaged(true);
+		setBottom(notificationBox);
+		BorderPane.setMargin(notificationBox, Insets.EMPTY);
+
 
 	}
 
@@ -79,6 +105,19 @@ public final class Navigation extends BorderPane {
 		replaceCenter(details, true);
 	}
 	
+	public void showNotification(String text) {
+		notificationLabel.setText(text);
+		
+		notificationBox.setVisible(true);
+
+	    if (notificationTimer != null) notificationTimer.stop();
+	    notificationTimer = new PauseTransition(Duration.seconds(2));
+	    notificationTimer.setOnFinished(e -> {
+	    	notificationBox.setVisible(false);
+	    });
+	    notificationTimer.playFromStart();
+	}
+
 
 
 	public void back() {
@@ -113,9 +152,5 @@ public final class Navigation extends BorderPane {
 
 		setCenter(next);
 	}
-	
-	
-	
 
-	
 }
