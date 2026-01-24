@@ -13,6 +13,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gr.unipi.ddim.meallabapi.models.Meal;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Shared persistence + in-memory storage for Meal "collections" (favorites,
@@ -24,6 +26,7 @@ public abstract class AbstractMealStoreManager {
 	private final Map<String, Meal> byId = new LinkedHashMap<>();
 	private final ObjectMapper mapper = new ObjectMapper();
 	private final Path filePath;
+	private static final Logger logger = LogManager.getLogger(AbstractMealStoreManager.class);
 
 	protected AbstractMealStoreManager(String fileName) {
 		this.filePath = defaultFilePath(fileName);
@@ -114,7 +117,7 @@ public abstract class AbstractMealStoreManager {
 			}
 		} catch (Exception e) {
 			// don't crash the app because of a broken file
-			System.err.println("Could not load " + filePath.getFileName() + ": " + e.getMessage());
+			logger.error("Could not load {}", filePath.getFileName(), e);
 		}
 	}
 
@@ -123,7 +126,7 @@ public abstract class AbstractMealStoreManager {
 			Files.createDirectories(filePath.getParent());
 			mapper.writerWithDefaultPrettyPrinter().writeValue(filePath.toFile(), getAll());
 		} catch (IOException e) {
-			System.err.println("Could not save " + filePath.getFileName() + ": " + e.getMessage());
+			logger.error("Could not save {}", filePath.getFileName(), e);
 		}
 	}
 }

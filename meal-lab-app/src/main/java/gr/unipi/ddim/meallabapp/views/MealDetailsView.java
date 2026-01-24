@@ -20,11 +20,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MealDetailsView extends BorderPane {
 
 	private final MealClient client;
 	private final Navigation navigation;
+	private static final Logger logger = LogManager.getLogger(MealDetailsView.class);
 
 	private final Label mealTitleLabel = new Label();
 	private final Label mealCategoryLabel = new Label();
@@ -202,7 +205,7 @@ public class MealDetailsView extends BorderPane {
 			try {
 				imageBytes = client.fetchMealImage(meal, ImageSize.MEDIUM);
 			} catch (Exception e) {
-				System.err.println("Could not load image: " + e.getMessage());
+				logger.error("Could not load image for meal id={}", meal.getIdMeal(), e);
 			}
 
 			final byte[] finalBytes = imageBytes;

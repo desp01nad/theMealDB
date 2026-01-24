@@ -13,11 +13,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class SearchRecipeView extends BorderPane {
 
 	private final MealClient client;
 	private final Navigation navigation;
+	private static final Logger logger = LogManager.getLogger(SearchRecipeView.class);
 
 	private final RadioButton byNameBtn = new RadioButton("By name");
 	private final RadioButton byIngredientBtn = new RadioButton("By ingredient");
@@ -69,6 +72,7 @@ public final class SearchRecipeView extends BorderPane {
 		Task<List<Meal>> task = new Task<>() {
 			@Override
 			protected List<Meal> call() {
+				logger.info("Search request started for query='{}' (byName={})", query, byNameBtn.isSelected());
 				if (byNameBtn.isSelected()) {
 					return client.searchMealsByName(query);
 				} else {
@@ -80,12 +84,17 @@ public final class SearchRecipeView extends BorderPane {
 		task.setOnSucceeded(e -> {
 			resultsView.setResults(query, task.getValue());
 			searchBtn.setDisable(false);
+			int count = task.getValue() == null ? 0 : task.getValue().size();
+			logger.info("Search request completed for query='{}' (byName={}) with {} results", query,
+					byNameBtn.isSelected(), count);
 		});
 
 		task.setOnFailed(e -> {
 			resultsView.clearResults();
 			searchBtn.setDisable(false);
 
+			Throwable error = task.getException();
+			logger.error("Search failed for query='{}' (byName={})", query, byNameBtn.isSelected(), error);
 			navigation.showNotification("✕ Search failed");
 		});
 

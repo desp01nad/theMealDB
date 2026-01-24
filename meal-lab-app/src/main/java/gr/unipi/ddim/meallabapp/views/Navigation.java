@@ -20,10 +20,13 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.util.Duration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class Navigation extends BorderPane {
 
 	private final MealClient client;
+	private static final Logger logger = LogManager.getLogger(Navigation.class);
 
 	private static final int MAX_BACK_STACK_SIZE = 20;
 	private final Deque<Node> backStack = new ArrayDeque<>();
@@ -117,7 +120,7 @@ public final class Navigation extends BorderPane {
 			try {
 				meal = client.getMealById(mealId);
 			} catch (Exception ex) {
-				System.err.println("Failed to load meal details: " + ex.getMessage());
+				logger.error("Failed to load meal details for id={}", mealId, ex);
 			}
 
 			Meal finalMeal = meal;
@@ -125,6 +128,7 @@ public final class Navigation extends BorderPane {
 				if (getCenter() != details)
 					return;
 				if (finalMeal == null) {
+					logger.warn("Meal details request returned null for id={}", mealId);
 					details.showMeal(null);
 					showNotification("✕ Could not load meal details");
 					return;

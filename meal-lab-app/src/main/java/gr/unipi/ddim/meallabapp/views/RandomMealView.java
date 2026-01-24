@@ -6,11 +6,14 @@ import gr.unipi.ddim.meallabapi.api.MealClient;
 import gr.unipi.ddim.meallabapi.models.Meal;
 import javafx.concurrent.Task;
 import javafx.scene.control.Button;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class RandomMealView extends MealDetailsView {
 
 	private final Button newRandomMealBtn = new Button("⟳ New Random Recipe");
 	private String lastMealId;
+	private static final Logger logger = LogManager.getLogger(RandomMealView.class);
 
 	public RandomMealView(MealClient client, Navigation navigation) {
 		super(client, navigation);
@@ -41,6 +44,7 @@ public final class RandomMealView extends MealDetailsView {
 		task.setOnSucceeded(e -> {
 			Meal meal = task.getValue();
 			if (meal == null) {
+				logger.warn("Random meal request returned null");
 				showMeal(null);
 				newRandomMealBtn.setDisable(false);
 				return;
@@ -52,6 +56,8 @@ public final class RandomMealView extends MealDetailsView {
 		});
 
 		task.setOnFailed(e -> {
+			Throwable error = task.getException();
+			logger.error("Random meal request failed", error);
 			showMeal(null);
 			newRandomMealBtn.setDisable(false);
 		});

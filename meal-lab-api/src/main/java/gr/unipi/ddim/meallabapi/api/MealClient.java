@@ -8,6 +8,8 @@ import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,6 +21,7 @@ import gr.unipi.ddim.meallabapi.models.MealResponse;
 public class MealClient {
 
 	private static final String BASE_URL = "https://www.themealdb.com/api/json/v1/1";
+	private static final Logger logger = LogManager.getLogger(MealClient.class);
 
 	private final CloseableHttpClient httpClient;
 	private final ObjectMapper mapper;
@@ -63,6 +66,7 @@ public class MealClient {
 
 		} catch (IOException e) {
 			// Handle Network Errors
+			logger.error("Network error while calling TheMealDB: {}", url, e);
 			throw new MealApiException("Network Error: Unable to conncect to theMealDB", e);
 		}
 	}
@@ -123,6 +127,7 @@ public class MealClient {
 			});
 
 		} catch (IOException e) {
+			logger.error("Network error while downloading image from {}", finalUrl, e);
 			throw new MealApiException("Network error while downloading image", e);
 		}
 	}

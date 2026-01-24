@@ -14,6 +14,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MealCardView extends VBox {
 
@@ -22,6 +24,7 @@ public class MealCardView extends VBox {
 	private final Navigation navigation;
 	protected final VBox footer;
 	protected final HBox buttonsRow;
+	private static final Logger logger = LogManager.getLogger(MealCardView.class);
 
 	private final ImageView thumbView = new ImageView();
 	private final Label titleLabel = new Label();
@@ -81,7 +84,7 @@ public class MealCardView extends VBox {
 			try {
 				imageBytes = client.fetchMealImage(meal, ImageSize.SMALL);
 			} catch (Exception e) {
-				System.err.println("Could not load image: " + e.getMessage());
+				logger.error("Could not load thumbnail for meal id={}", meal.getIdMeal(), e);
 			}
 
 			final byte[] finalBytes = imageBytes;
