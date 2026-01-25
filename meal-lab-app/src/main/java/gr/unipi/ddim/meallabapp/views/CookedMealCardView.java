@@ -12,6 +12,7 @@ public class CookedMealCardView extends MealCardView {
 	public CookedMealCardView(MealClient client, Meal meal, Navigation navigation) {
 		super(client, meal, navigation);
 
+		removeBtn.getStyleClass().add("app-button");
 		removeBtn.setOnAction(event -> {
 			navigation.cooked().remove(meal.getIdMeal());
 

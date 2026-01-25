@@ -1,0 +1,17 @@
+.app-button {
+    -fx-background-color: #B53324;
+    -fx-text-fill: #F7F2D7;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #B53324;
+    -fx-border-width: 1;
+    -fx-padding: 6 14;
+}
+
+.app-button:hover {
+    -fx-background-color: #C44031;
+}
+
+.app-button:pressed {
+    -fx-background-color: #C44031;
+}

@@ -20,6 +20,7 @@ public final class RandomMealView extends MealDetailsView {
 		super(client, navigation);
 
 		newRandomMealBtn.setFocusTraversable(false);
+		newRandomMealBtn.getStyleClass().add("app-button");
 		newRandomMealBtn.setOnAction(e -> fetchAndShowNewRandomMeal());
 
 		getHeaderActions().getChildren().add(0, newRandomMealBtn);

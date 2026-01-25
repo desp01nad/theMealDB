@@ -44,6 +44,7 @@ public final class SearchRecipeView extends BorderPane {
 		queryField.setPromptText("Search a recipe");
 
 		searchBtn.setOnAction(e -> search());
+		searchBtn.getStyleClass().add("app-button");
 	}
 
 	private HBox createSearchBar() {

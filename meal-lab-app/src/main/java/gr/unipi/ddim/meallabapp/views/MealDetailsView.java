@@ -118,9 +118,12 @@ public class MealDetailsView extends BorderPane {
 	private HBox createHeader() {
 		Button backBtn = new Button("← Back");
 		backBtn.setOnAction(e -> navigation.back());
+		backBtn.getStyleClass().add("app-button");
 
 		Button favoritesBtn = new Button("❤︎ Add to Favorites");
 		Button cookedBtn = new Button("☑ Add To Cooked");
+		favoritesBtn.getStyleClass().add("app-button");
+		cookedBtn.getStyleClass().add("app-button");
 
 		favoritesBtn.setFocusTraversable(false);
 		favoritesBtn.setOnAction(e -> {

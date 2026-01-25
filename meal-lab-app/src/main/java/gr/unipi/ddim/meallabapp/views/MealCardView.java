@@ -55,6 +55,7 @@ public class MealCardView extends VBox {
 		idLabel.setStyle("-fx-text-fill: #666666;");
 
 		detailsBtn.setOnAction(e -> this.navigation.showMealDetails(meal.getIdMeal()));
+		detailsBtn.getStyleClass().add("app-button");
 
 		buttonsRow = new HBox(8, detailsBtn);
 		buttonsRow.setAlignment(Pos.CENTER);

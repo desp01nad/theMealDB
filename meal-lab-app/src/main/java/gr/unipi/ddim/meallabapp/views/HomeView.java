@@ -19,11 +19,11 @@ public class HomeView extends VBox {
 		headerBox.setAlignment(Pos.CENTER);
 
 		Label upertitle = new Label("Welcome to");
-		upertitle.setStyle("-fx-font-size: 18px;");
+		upertitle.setStyle("-fx-font-size: 22px;");
 		upertitle.setAlignment(Pos.CENTER);
 
 		Label title = new Label("Meal Lab");
-		title.setStyle("-fx-font-size: 36px; -fx-font-weight: bold;");
+		title.setStyle("-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #B53324;");
 		title.setAlignment(Pos.CENTER);
 
 		Label subtitle = new Label("What’s cooking?");

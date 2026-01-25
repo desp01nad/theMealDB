@@ -13,6 +13,7 @@ public class MealApp extends Application {
 		Navigation nav = new Navigation();
 
 		Scene scene = new Scene(nav, 1200, 800);
+		scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
 		primaryStage.setTitle("Meal Lab App");
 		primaryStage.setScene(scene);
 		primaryStage.show();
