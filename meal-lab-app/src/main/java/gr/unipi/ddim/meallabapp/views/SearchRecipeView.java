@@ -64,6 +64,8 @@ public final class SearchRecipeView extends BorderPane {
 		String query = queryField.getText();
 		if (query == null || query.isBlank()) {
 			resultsView.clearResults();
+			String required = byNameBtn.isSelected() ? "name" : "ingredient";
+			navigation.showNotification("Please enter a " + required + ".");
 			return;
 		}
 
@@ -87,6 +89,9 @@ public final class SearchRecipeView extends BorderPane {
 			int count = task.getValue() == null ? 0 : task.getValue().size();
 			logger.info("Search request completed for query='{}' (byName={}) with {} results", query,
 					byNameBtn.isSelected(), count);
+			if (count == 0) {
+				navigation.showNotification("No results found.");
+			}
 		});
 
 		task.setOnFailed(e -> {
