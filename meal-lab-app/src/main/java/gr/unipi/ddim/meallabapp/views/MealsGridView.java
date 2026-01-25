@@ -13,6 +13,9 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
 
+/**
+ * Grid container that renders meal cards with a title and scrollable layout.
+ */
 public final class MealsGridView extends BorderPane {
 
 	private final Label titleLabel = new Label();
@@ -20,8 +23,8 @@ public final class MealsGridView extends BorderPane {
 	private final ScrollPane scroll = new ScrollPane();
 
 	// a function that takes a Meal and returns a JavaFX Node.
-	// in this case the returned Node will be a card (MealCardView or
-	// FavoriteMealCardView).
+	// in this case the returned Node will be a card (MealCardView,
+	// FavoriteMealCardView or CookedMealCardView).
 	private final Function<Meal, Node> cardCreator;
 
 	// This constructor is used when you want the grid to behave like Search
@@ -55,6 +58,7 @@ public final class MealsGridView extends BorderPane {
 		clearResults();
 	}
 
+	/** Clears the grid and resets the title to the default state. */
 	public void clearResults() {
 		titleLabel.setText("Results");
 		grid.getChildren().clear();
@@ -74,6 +78,7 @@ public final class MealsGridView extends BorderPane {
 		setResultsInternal("Results for: " + safe(queryText), meals);
 	}
 
+	/** Displays a list of meals using the provided title. */
 	public void setResultsWithTitle(String title, List<Meal> meals) {
 		setResultsInternal(title == null ? "" : title, meals);
 	}

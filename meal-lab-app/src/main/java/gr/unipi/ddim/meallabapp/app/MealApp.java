@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/** JavaFX entry point for the Meal Lab desktop app. */
 public class MealApp extends Application {
 
 	@Override
@@ -17,6 +18,7 @@ public class MealApp extends Application {
 		primaryStage.show();
 	}
 
+	/** Launches the JavaFX application. */
 	public static void main(String[] args) {
 		Application.launch(MealApp.class, args);
 	}

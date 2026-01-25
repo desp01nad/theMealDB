@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/** Meal details view that fetches and displays random meals. */
 public final class RandomMealView extends MealDetailsView {
 
 	private final Button newRandomMealBtn = new Button("⟳ New Random Recipe");

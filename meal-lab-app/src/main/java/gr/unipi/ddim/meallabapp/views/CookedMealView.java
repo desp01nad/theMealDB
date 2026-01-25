@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
+/** Page that lists the meals marked as cooked. */
 public class CookedMealView extends BorderPane {
 	private final MealClient client;
 	private final Navigation navigation;
@@ -31,6 +32,7 @@ public class CookedMealView extends BorderPane {
 		setCenter(cookedView);
 	}
 
+	/** Reloads cooked meals from the manager and updates the grid. */
 	public void refresh() {
 		cookedView.setResultsWithTitle("", navigation.cooked().getAll());
 	}

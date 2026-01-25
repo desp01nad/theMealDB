@@ -4,6 +4,7 @@ import gr.unipi.ddim.meallabapi.api.MealClient;
 import gr.unipi.ddim.meallabapi.models.Meal;
 import javafx.scene.control.Button;
 
+/** Meal card variant with a remove-from-favorites action. */
 public class FavoriteMealCardView extends MealCardView {
 
 	private final Button removeBtn = new Button("Remove");

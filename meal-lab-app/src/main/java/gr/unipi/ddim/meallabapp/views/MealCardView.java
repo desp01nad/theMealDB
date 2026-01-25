@@ -17,6 +17,7 @@ import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/** Compact card used to display a meal and load its thumbnail asynchronously. */
 public class MealCardView extends VBox {
 
 	private final MealClient client;

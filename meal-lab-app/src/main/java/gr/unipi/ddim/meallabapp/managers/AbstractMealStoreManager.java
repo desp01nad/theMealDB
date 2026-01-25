@@ -33,12 +33,14 @@ public abstract class AbstractMealStoreManager {
 		load();
 	}
 
+	/** Returns whether the collection contains the given meal id. */
 	public final boolean contains(String mealId) {
 		if (mealId == null || mealId.isBlank())
 			return false;
 		return byId.containsKey(mealId);
 	}
 
+	/** Adds a meal to the collection and persists it. */
 	public final void add(Meal meal) {
 		if (!isValid(meal))
 			return;
@@ -48,6 +50,7 @@ public abstract class AbstractMealStoreManager {
 		save();
 	}
 
+	/** Removes a meal by id (no-op if missing) and persists. */
 	public final void remove(String mealId) {
 		if (mealId == null || mealId.isBlank())
 			return;
@@ -72,6 +75,7 @@ public abstract class AbstractMealStoreManager {
 		return true;
 	}
 
+	/** Returns a snapshot list of all stored meals. */
 	public final List<Meal> getAll() {
 		return new ArrayList<>(byId.values());
 	}

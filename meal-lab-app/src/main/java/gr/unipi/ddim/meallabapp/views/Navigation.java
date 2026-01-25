@@ -23,6 +23,7 @@ import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/** Root container that wires navigation, background tasks, and notifications. */
 public final class Navigation extends BorderPane {
 
 	private final MealClient client;
@@ -54,6 +55,7 @@ public final class Navigation extends BorderPane {
 		this(new MealClient());
 	}
 
+	/** Creates the navigation shell with a specific API client. */
 	public Navigation(MealClient client) {
 		this.client = client;
 		homeView = new HomeView();
@@ -86,27 +88,33 @@ public final class Navigation extends BorderPane {
 		return client;
 	}
 
+	/** Shows the home page. */
 	public void showHome() {
 		replaceCenter(homeView, false);
 	}
 
+	/** Shows the search page. */
 	public void showSearch() {
 		replaceCenter(searchRecipeView, true);
 	}
 
+	/** Shows the random meal page. */
 	public void showRandom() {
 		randomMealView.updateFavoriteCookedButtons();
 		replaceCenter(randomMealView, true);
 	}
 
+	/** Returns the favorites manager. */
 	public FavoritesManager favorites() {
 		return favoritesManager;
 	}
 
+	/** Returns the cooked meals manager. */
 	public CookedManager cooked() {
 		return cookedManager;
 	}
 
+	/** Loads and displays meal details for a specific id. */
 	public void showMealDetails(String mealId) {
 		if (mealId == null || mealId.isBlank())
 			return;
@@ -143,11 +151,13 @@ public final class Navigation extends BorderPane {
 		replaceCenter(favoriteView, true);
 	}
 
+	/** Displays the cooked meals page. */
 	public void showCooked() {
 		cookedView.refresh();
 		replaceCenter(cookedView, true);
 	}
 
+	/** Shows a short-lived notification message at the bottom. */
 	public void showNotification(String text) {
 		notificationLabel.setText(text);
 

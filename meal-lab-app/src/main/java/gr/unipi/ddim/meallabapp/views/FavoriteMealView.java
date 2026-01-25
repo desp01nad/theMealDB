@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
+/** Page that lists the user's favorite meals. */
 public class FavoriteMealView extends BorderPane {
 	private final MealClient client;
 	private final Navigation navigation;
@@ -31,6 +32,7 @@ public class FavoriteMealView extends BorderPane {
 		setCenter(favoritesView);
 	}
 
+	/** Reloads favorites from the manager and updates the grid. */
 	public void refresh() {
 		favoritesView.setResultsWithTitle("", navigation.favorites().getAll());
 	}

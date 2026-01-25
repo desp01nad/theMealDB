@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 
+/** Landing page view with the app's welcome copy. */
 public class HomeView extends VBox {
 
 	public HomeView() {

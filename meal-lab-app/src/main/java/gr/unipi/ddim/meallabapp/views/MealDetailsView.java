@@ -23,6 +23,7 @@ import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/** Detailed view for a single meal, including ingredients and instructions. */
 public class MealDetailsView extends BorderPane {
 
 	private final MealClient client;
@@ -66,6 +67,7 @@ public class MealDetailsView extends BorderPane {
 		return client;
 	}
 
+	/** Displays the provided meal or clears the view when null. */
 	public void showMeal(Meal meal) {
 		this.currentMeal = meal;
 

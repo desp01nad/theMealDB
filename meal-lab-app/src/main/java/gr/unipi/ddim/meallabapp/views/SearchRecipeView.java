@@ -16,6 +16,7 @@ import javafx.scene.layout.HBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/** View that searches recipes by name or ingredient and displays results. */
 public final class SearchRecipeView extends BorderPane {
 
 	private final MealClient client;
