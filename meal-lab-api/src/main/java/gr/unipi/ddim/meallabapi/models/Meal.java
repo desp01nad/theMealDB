@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/** Represents a meal returned by TheMealDB API, including ingredients and measures. */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Meal {
 	// --- Required Fields ---
@@ -59,7 +60,7 @@ public class Meal {
 	private String strIngredient20;
 	private String strMeasure20;
 
-	// This method combines all 20 ingredient/measure pairs into a clean List.
+	/** Combines all ingredient/measure pairs into a display-friendly list. */
 	public List<String> getIngredientsList() {
 		List<String> ingredients = new ArrayList<>();
 		addIfValid(ingredients, strIngredient1, strMeasure1);
