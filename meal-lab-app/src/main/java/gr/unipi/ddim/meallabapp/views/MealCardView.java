@@ -2,6 +2,9 @@ package gr.unipi.ddim.meallabapp.views;
 
 import java.io.ByteArrayInputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import gr.unipi.ddim.meallabapi.api.MealClient;
 import gr.unipi.ddim.meallabapi.models.ImageSize;
 import gr.unipi.ddim.meallabapi.models.Meal;
@@ -14,10 +17,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-/** Compact card used to display a meal and load its thumbnail asynchronously. */
+/**
+ * Compact card used to display a meal and load its thumbnail asynchronously.
+ */
 public class MealCardView extends VBox {
 
 	private final MealClient client;
@@ -39,12 +42,12 @@ public class MealCardView extends VBox {
 
 		setSpacing(8);
 		setPadding(new Insets(10));
-		setPrefWidth(190);
-		setMaxWidth(190);
+		setPrefWidth(215);
+		setMaxWidth(215);
 		setStyle("-fx-border-color: #D0D0D0; -fx-border-radius: 8; -fx-background-radius: 8;");
 
-		thumbView.setFitWidth(190);
-		thumbView.setFitHeight(170);
+		thumbView.setFitWidth(210);
+		thumbView.setFitHeight(210);
 		thumbView.setPreserveRatio(true);
 		thumbView.setSmooth(true);
 

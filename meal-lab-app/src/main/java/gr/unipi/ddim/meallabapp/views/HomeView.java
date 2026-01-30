@@ -23,7 +23,7 @@ public class HomeView extends VBox {
 		upertitle.setAlignment(Pos.CENTER);
 
 		Label title = new Label("Meal Lab");
-		title.setStyle("-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #B53324;");
+		title.setStyle("-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: #B53324;");
 		title.setAlignment(Pos.CENTER);
 
 		Label subtitle = new Label("What’s cooking?");
